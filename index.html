@@ -332,8 +332,15 @@
       
         
           
-            
           
+          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/01/11/test-1/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -451,46 +458,16 @@
       
         
           
-            <h1 id="3-7-softmax回归的简洁实现"><a href="#3-7-softmax回归的简洁实现" class="headerlink" title="3.7 softmax回归的简洁实现"></a>3.7 softmax回归的简洁实现</h1><p>我们在3.3节（线性回归的简洁实现）中已经了解了使用Pytorch实现模型的便利。下面，让我们再次使用Pytorch来实现一个softmax回归模型。首先导入所需的包或模块。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch <span class="keyword">import</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.nn <span class="keyword">import</span> init</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line">sys.path.append(<span class="string">".."</span>) </span><br><span class="line"><span class="keyword">import</span> d2lzh_pytorch <span class="keyword">as</span> d2l</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-7-1-获取和读取数据"><a href="#3-7-1-获取和读取数据" class="headerlink" title="3.7.1 获取和读取数据"></a>3.7.1 获取和读取数据</h2><p>我们仍然使用Fashion-MNIST数据集和上一节中设置的批量大小。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">batch_size = <span class="number">256</span></span><br><span class="line">train_iter, test_iter = d2l.load_data_fashion_mnist(batch_size)</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-7-2-定义和初始化模型"><a href="#3-7-2-定义和初始化模型" class="headerlink" title="3.7.2 定义和初始化模型"></a>3.7.2 定义和初始化模型</h2><p>在3.4节（softmax回归）中提到，softmax回归的输出层是一个全连接层，所以我们用一个线性模块就可以了。因为前面我们数据返回的每个batch样本<code>x</code>的形状为(batch_size, 1, 28, 28), 所以我们要先用<code>view()</code>将<code>x</code>的形状转换成(batch_size, 784)才送入全连接层。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">num_inputs = <span class="number">784</span></span><br><span class="line">num_outputs = <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LinearNet</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self, num_inputs, num_outputs)</span>:</span></span><br><span class="line">        super(LinearNet, self).__init__()</span><br><span class="line">        self.linear = nn.Linear(num_inputs, num_outputs)</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span> <span class="comment"># x shape: (batch, 1, 28, 28)</span></span><br><span class="line">        y = self.linear(x.view(x.shape[<span class="number">0</span>], <span class="number">-1</span>))</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line">    </span><br><span class="line">net = LinearNet(num_inputs, num_outputs)</span><br></pre></td></tr></table></figure>
-
-<p>我们将对<code>x</code>的形状转换的这个功能自定义一个<code>FlattenLayer</code>并记录在<code>d2lzh_pytorch</code>中方便后面使用。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 本函数已保存在d2lzh_pytorch包中方便以后使用</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">FlattenLayer</span><span class="params">(nn.Module)</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span><span class="params">(self)</span>:</span></span><br><span class="line">        super(FlattenLayer, self).__init__()</span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span><span class="params">(self, x)</span>:</span> <span class="comment"># x shape: (batch, *, *, ...)</span></span><br><span class="line">        <span class="keyword">return</span> x.view(x.shape[<span class="number">0</span>], <span class="number">-1</span>)</span><br></pre></td></tr></table></figure>
-
-<p>这样我们就可以更方便地定义我们的模型：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> collections <span class="keyword">import</span> OrderedDict</span><br><span class="line">net = nn.Sequential(</span><br><span class="line">        <span class="comment"># FlattenLayer(),</span></span><br><span class="line">        <span class="comment"># nn.Linear(num_inputs, num_outputs)</span></span><br><span class="line">        OrderedDict([</span><br><span class="line">          (<span class="string">'flatten'</span>, FlattenLayer()),</span><br><span class="line">          (<span class="string">'linear'</span>, nn.Linear(num_inputs, num_outputs))])</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
-
-<p>然后，我们使用均值为0、标准差为0.01的正态分布随机初始化模型的权重参数。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">init.normal_(net.linear.weight, mean=<span class="number">0</span>, std=<span class="number">0.01</span>)</span><br><span class="line">init.constant_(net.linear.bias, val=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="3-7-3-softmax和交叉熵损失函数"><a href="#3-7-3-softmax和交叉熵损失函数" class="headerlink" title="3.7.3 softmax和交叉熵损失函数"></a>3.7.3 softmax和交叉熵损失函数</h2><p>如果做了上一节的练习，那么你可能意识到了分开定义softmax运算和交叉熵损失函数可能会造成数值不稳定。因此，PyTorch提供了一个包括softmax运算和交叉熵损失计算的函数。它的数值稳定性更好。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">loss = nn.CrossEntropyLoss()</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-7-4-定义优化算法"><a href="#3-7-4-定义优化算法" class="headerlink" title="3.7.4 定义优化算法"></a>3.7.4 定义优化算法</h2><p>我们使用学习率为0.1的小批量随机梯度下降作为优化算法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">optimizer = torch.optim.SGD(net.parameters(), lr=<span class="number">0.1</span>)</span><br></pre></td></tr></table></figure>
-
-<h2 id="3-7-5-训练模型"><a href="#3-7-5-训练模型" class="headerlink" title="3.7.5 训练模型"></a>3.7.5 训练模型</h2><p>接下来，我们使用上一节中定义的训练函数来训练模型。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">num_epochs = <span class="number">5</span></span><br><span class="line">d2l.train_ch3(net, train_iter, test_iter, loss, num_epochs, batch_size, <span class="literal">None</span>, <span class="literal">None</span>, optimizer)</span><br></pre></td></tr></table></figure>
-<p>输出：</p>
-<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">epoch <span class="number">1</span>, loss <span class="number">0.0031</span>, train acc <span class="number">0.745</span>, test acc <span class="number">0.790</span></span><br><span class="line">epoch <span class="number">2</span>, loss <span class="number">0.0022</span>, train acc <span class="number">0.812</span>, test acc <span class="number">0.807</span></span><br><span class="line">epoch <span class="number">3</span>, loss <span class="number">0.0021</span>, train acc <span class="number">0.825</span>, test acc <span class="number">0.806</span></span><br><span class="line">epoch <span class="number">4</span>, loss <span class="number">0.0020</span>, train acc <span class="number">0.832</span>, test acc <span class="number">0.810</span></span><br><span class="line">epoch <span class="number">5</span>, loss <span class="number">0.0019</span>, train acc <span class="number">0.838</span>, test acc <span class="number">0.823</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ul>
-<li>PyTorch提供的函数往往具有更好的数值稳定性。</li>
-<li>可以使用PyTorch更简洁地实现softmax回归。</li>
-</ul>
-<hr>
-<blockquote>
-<p>注：本节除了代码之外与原书基本相同，<a href="https://zh.d2l.ai/chapter_deep-learning-basics/softmax-regression-gluon.html" target="_blank" rel="noopener">原书传送门</a></p>
-</blockquote>
-
-          
+          3.7 softmax回归的简洁实现我们在3.3节（线性回归的简洁实现）中已经了解了使用Pytorch实现模型的便利。下面，让我们再次使用Pytorch来实现一个softmax回归模型。首先导入所需的包或模块。
+1234567import 
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/01/11/3.7_softmax-regression-pytorch/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -608,8 +585,15 @@
       
         
           
-            
           
+          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/01/11/test/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -727,21 +711,15 @@
       
         
           
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-          
+          Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/01/11/hello-world/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
