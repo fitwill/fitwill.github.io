@@ -79,17 +79,17 @@
 
 
 
-<meta name="description" content="语言模型一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots, w_T$。语言模型的目标就是评估该序列是否合理，即计算该序列的概率： $$P(w_1, w_2, \ldots, w_T)$$ 本节我们介绍基于统计的语言模型，主要是$n$元语法（$n$-gram）。在后续内容中，我们将会介绍基于神经网络的语言模型。 语言模型假设序列$w_1,">
+<meta name="description" content="语言模型一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots, w_T$。语言模型的目标就是评估该序列是否合理，即计算该序列的概率： $$P(w_1, w_2, \ldots, w_T)$$ 本节我们介绍基于统计的语言模型，主要是$n$元语法（$n$-gram）。在后续内容中，我们将会介绍基于神经网络的语言模型。 统计学习的语言模型假设序列$">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【NLP】统计学习的语言模型">
 <meta property="og:url" content="http://willzhang.tech/2020/02/15/%E3%80%90NLP%E3%80%91%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="语言模型一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots, w_T$。语言模型的目标就是评估该序列是否合理，即计算该序列的概率： $$P(w_1, w_2, \ldots, w_T)$$ 本节我们介绍基于统计的语言模型，主要是$n$元语法（$n$-gram）。在后续内容中，我们将会介绍基于神经网络的语言模型。 语言模型假设序列$w_1,">
+<meta property="og:description" content="语言模型一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots, w_T$。语言模型的目标就是评估该序列是否合理，即计算该序列的概率： $$P(w_1, w_2, \ldots, w_T)$$ 本节我们介绍基于统计的语言模型，主要是$n$元语法（$n$-gram）。在后续内容中，我们将会介绍基于神经网络的语言模型。 统计学习的语言模型假设序列$">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://willzhang.tech/2020/02/15/%E3%80%90NLP%E3%80%91%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/image-20200215162542109.png">
 <meta property="og:image" content="http://willzhang.tech/2020/02/15/%E3%80%90NLP%E3%80%91%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/image-20200215162010007.png">
 <meta property="article:published_time" content="2020-02-15T08:01:58.000Z">
-<meta property="article:modified_time" content="2020-02-15T08:38:08.425Z">
+<meta property="article:modified_time" content="2020-02-15T08:40:27.270Z">
 <meta property="article:author" content="Will">
 <meta property="article:tag" content="Dive系列">
 <meta name="twitter:card" content="summary">
@@ -358,7 +358,7 @@
         <h1 id="语言模型"><a href="#语言模型" class="headerlink" title="语言模型"></a>语言模型</h1><p>一段自然语言文本可以看作是一个离散时间序列，给定一个长度为$T$的词的序列$w_1, w_2, \ldots, w_T$。<br>语言模型的目标就是评估该序列是否合理，即计算该序列的概率：</p>
 <p>$$<br>P(w_1, w_2, \ldots, w_T)<br>$$</p>
 <p>本节我们介绍基于统计的语言模型，主要是$n$元语法（$n$-gram）。在后续内容中，我们将会介绍基于神经网络的语言模型。</p>
-<h2 id="语言模型-1"><a href="#语言模型-1" class="headerlink" title="语言模型"></a>语言模型</h2><p>假设序列$w_1, w_2, \ldots, w_T$中的每个词是依次生成的，我们有</p>
+<h2 id="统计学习的语言模型"><a href="#统计学习的语言模型" class="headerlink" title="统计学习的语言模型"></a>统计学习的语言模型</h2><p>假设序列$w_1, w_2, \ldots, w_T$中的每个词是依次生成的，我们有</p>
 <p>$$<br>\begin{align<em>}<br>P(w_1, w_2, \ldots, w_T)<br>&amp;= \prod_{t=1}^T P(w_t \mid w_1, \ldots, w_{t-1})\<br>&amp;= P(w_1)P(w_2 \mid w_1) \cdots P(w_T \mid w_1w_2\cdots w_{T-1})<br>\end{align</em>}<br>$$</p>
 <p>例如，一段含有4个词的文本序列的概率</p>
 <p>$$<br>P(w_1, w_2, w_3, w_4) =  P(w_1) P(w_2 \mid w_1) P(w_3 \mid w_1, w_2) P(w_4 \mid w_1, w_2, w_3).<br>$$</p>
@@ -582,7 +582,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#语言模型"><span class="nav-number">1.</span> <span class="nav-text">语言模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#语言模型-1"><span class="nav-number">1.1.</span> <span class="nav-text">语言模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n元语法"><span class="nav-number">1.2.</span> <span class="nav-text">n元语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语言模型数据集"><span class="nav-number">1.3.</span> <span class="nav-text">语言模型数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#读取数据集"><span class="nav-number">1.3.1.</span> <span class="nav-text">读取数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#建立字符索引"><span class="nav-number">1.3.2.</span> <span class="nav-text">建立字符索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时序数据的采样"><span class="nav-number">1.4.</span> <span class="nav-text">时序数据的采样</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#随机采样"><span class="nav-number">1.4.1.</span> <span class="nav-text">随机采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相邻采样"><span class="nav-number">1.4.2.</span> <span class="nav-text">相邻采样</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#语言模型"><span class="nav-number">1.</span> <span class="nav-text">语言模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#统计学习的语言模型"><span class="nav-number">1.1.</span> <span class="nav-text">统计学习的语言模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n元语法"><span class="nav-number">1.2.</span> <span class="nav-text">n元语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#语言模型数据集"><span class="nav-number">1.3.</span> <span class="nav-text">语言模型数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#读取数据集"><span class="nav-number">1.3.1.</span> <span class="nav-text">读取数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#建立字符索引"><span class="nav-number">1.3.2.</span> <span class="nav-text">建立字符索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#时序数据的采样"><span class="nav-number">1.4.</span> <span class="nav-text">时序数据的采样</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#随机采样"><span class="nav-number">1.4.1.</span> <span class="nav-text">随机采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#相邻采样"><span class="nav-number">1.4.2.</span> <span class="nav-text">相邻采样</span></a></li></ol></li></ol></li></ol></div>
             
 
           </div>
