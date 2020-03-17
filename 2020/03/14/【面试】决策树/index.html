@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Dive系列," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -79,20 +79,17 @@
 
 
 
-<meta name="description" content="循环神经网络 本节介绍循环神经网络，下图展示了如何基于循环神经网络实现语言模型。我们的目的是基于当前的输入与过去的输入序列，预测序列的下一个字符。循环神经网络引入一个隐藏变量\(H\)，用\(H_{t}\)表示\(H\)在时间步\(t\)的值。\(H_{t}\)的计算基于\(X_{t}\)和\(H_{t-1}\)，可以认为\(H_{t}\)记录了到当前字符为止的序列信息，利用\(H_{t}\)对序">
+<meta name="description" content="基本概念   决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【NLP】RNN">
-<meta property="og:url" content="http://willzhang.tech/2020/02/16/%E3%80%90NLP%E3%80%91RNN/index.html">
+<meta property="og:title" content="【面试】决策树">
+<meta property="og:url" content="http://willzhang.tech/2020/03/14/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="循环神经网络 本节介绍循环神经网络，下图展示了如何基于循环神经网络实现语言模型。我们的目的是基于当前的输入与过去的输入序列，预测序列的下一个字符。循环神经网络引入一个隐藏变量\(H\)，用\(H_{t}\)表示\(H\)在时间步\(t\)的值。\(H_{t}\)的计算基于\(X_{t}\)和\(H_{t-1}\)，可以认为\(H_{t}\)记录了到当前字符为止的序列信息，利用\(H_{t}\)对序">
+<meta property="og:description" content="基本概念   决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://willzhang.tech/2020/02/16/%E3%80%90NLP%E3%80%91RNN/640.png">
-<meta property="article:published_time" content="2020-02-16T12:58:58.000Z">
-<meta property="article:modified_time" content="2020-03-14T04:32:25.340Z">
+<meta property="article:published_time" content="2020-03-14T11:28:58.000Z">
+<meta property="article:modified_time" content="2020-03-17T06:46:15.154Z">
 <meta property="article:author" content="Will">
-<meta property="article:tag" content="Dive系列">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://willzhang.tech/2020/02/16/%E3%80%90NLP%E3%80%91RNN/640.png">
 
 
 
@@ -122,13 +119,13 @@
 
 
 
-  <link rel="canonical" href="http://willzhang.tech/2020/02/16/【NLP】RNN/"/>
+  <link rel="canonical" href="http://willzhang.tech/2020/03/14/【面试】决策树/"/>
 
 
 
 
 
-  <title>【NLP】RNN | GO WITH Will</title>
+  <title>【面试】决策树 | GO WITH Will</title>
   
 
 
@@ -265,7 +262,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/02/16/%E3%80%90NLP%E3%80%91RNN/">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/03/14/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Will">
@@ -282,7 +279,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【NLP】RNN</h1>
+          <h1 class="post-title" itemprop="name headline">【面试】决策树</h1>
         
 
         <div class="post-meta">
@@ -294,8 +291,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-16T20:58:58+08:00">
-                2020-02-16
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-14T19:28:58+08:00">
+                2020-03-14
               </time>
             
 
@@ -354,24 +351,86 @@
       
 
       
-        <h1 id="循环神经网络">循环神经网络</h1>
-<p>本节介绍循环神经网络，下图展示了如何基于循环神经网络实现语言模型。我们的目的是基于当前的输入与过去的输入序列，预测序列的下一个字符。循环神经网络引入一个隐藏变量<span class="math inline">\(H\)</span>，用<span class="math inline">\(H_{t}\)</span>表示<span class="math inline">\(H\)</span>在时间步<span class="math inline">\(t\)</span>的值。<span class="math inline">\(H_{t}\)</span>的计算基于<span class="math inline">\(X_{t}\)</span>和<span class="math inline">\(H_{t-1}\)</span>，可以认为<span class="math inline">\(H_{t}\)</span>记录了到当前字符为止的序列信息，利用<span class="math inline">\(H_{t}\)</span>对序列的下一个字符进行预测。</p>
-<figure>
-<img src="/2020/02/16/%E3%80%90NLP%E3%80%91RNN/640.png" alt="Image Name"><figcaption>Image Name</figcaption>
-</figure>
-<h2 id="循环神经网络的构造">循环神经网络的构造</h2>
-<p>我们先看循环神经网络的具体构造。假设<span class="math inline">\(\boldsymbol{X}_t \in \mathbb{R}^{n \times d}\)</span>是时间步<span class="math inline">\(t\)</span>的小批量输入，<span class="math inline">\(\boldsymbol{H}_t \in \mathbb{R}^{n \times h}\)</span>是该时间步的隐藏变量，则：</p>
-<p><span class="math display">\[
-\boldsymbol{H}_t = \phi(\boldsymbol{X}_t \boldsymbol{W}_{xh} + \boldsymbol{H}_{t-1} \boldsymbol{W}_{hh}  + \boldsymbol{b}_h).
-\]</span></p>
-<p>其中，<span class="math inline">\(\boldsymbol{W}_{xh} \in \mathbb{R}^{d \times h}\)</span>，<span class="math inline">\(\boldsymbol{W}_{hh} \in \mathbb{R}^{h \times h}\)</span>，<span class="math inline">\(\boldsymbol{b}_{h} \in \mathbb{R}^{1 \times h}\)</span>，<span class="math inline">\(\phi\)</span>函数是非线性激活函数。由于引入了<span class="math inline">\(\boldsymbol{H}_{t-1} \boldsymbol{W}_{hh}\)</span>，<span class="math inline">\(H_{t}\)</span>能够捕捉截至当前时间步的序列的历史信息，就像是神经网络当前时间步的状态或记忆一样。由于<span class="math inline">\(H_{t}\)</span>的计算基于<span class="math inline">\(H_{t-1}\)</span>，上式的计算是循环的，使用循环计算的网络即循环神经网络（recurrent neural network）。</p>
-<p>在时间步<span class="math inline">\(t\)</span>，输出层的输出为：</p>
-<p><span class="math display">\[
-\boldsymbol{O}_t = \boldsymbol{H}_t \boldsymbol{W}_{hq} + \boldsymbol{b}_q.
-\]</span></p>
-<p>其中<span class="math inline">\(\boldsymbol{W}_{hq} \in \mathbb{R}^{h \times q}\)</span>，<span class="math inline">\(\boldsymbol{b}_q \in \mathbb{R}^{1 \times q}\)</span>。</p>
-<h2 id="从零开始实现循环神经网络">从零开始实现循环神经网络</h2>
-<p>我们先尝试从零开始实现一个基于字符级循环神经网络的语言模型，这里我们使用周杰伦的歌词作为语料，首先我们读入数据：</p>
+        <h3 id="基本概念">基本概念</h3>
+<hr>
+<ol type="1">
+<li><p>决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则；</p></li>
+<li>决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖；</li>
+<li><p>决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个特征或者属性，叶子结点表示某一个类；</p></li>
+<li><p>决策树学习通常包括三个步骤：特征选择、决策树生成以及决策树的剪枝。</p></li>
+</ol>
+<h3 id="特征选择">特征选择</h3>
+<hr>
+<p>既然决策树只是在不停地做 IF-THEN，那么问题就出现了：一个样本有n个属性的话，如何选择属性的优先性呢？</p>
+<p><strong>我们通常根据信息增益或者信息增益比来做特征选择，选择数值更大的属性作为划分依据。</strong></p>
+<p>那么什么是信息增益/信息增益比？这里，我们来了解以下概念。</p>
+<h4 id="concept_1-信息熵">Concept_1 信息熵</h4>
+<ol type="1">
+<li>直观理解：熵描述了（系统/随机变量的）不确定性。熵越大，不确定性越大，信息含量越少。</li>
+<li><p>公式： <span class="math display">\[H(X)=-\sum_{i=1}^{n}p_{i}log_{2}p_{i}\]</span></p></li>
+<li><p>熵仅依赖X的分布，与X的取值无关，因此又可以记作：<span class="math inline">\(H(p)=-\sum_{i=1}^{n}p_{i}log_{2}p_{i}\)</span></p></li>
+</ol>
+<h4 id="concept_2-条件熵">Concept_2 条件熵</h4>
+<ol type="1">
+<li><p><span class="math inline">\(H(Y|X)\)</span> 定义为：<u>在X给定条件下</u>，<u>Y的条件概率分布的熵</u> <u>对X的数学期望</u>；</p></li>
+<li><p>公式：<span class="math display">\[H(Y|X)=\sum_{i=1}^{n}p_{i}H(Y|X=x_{i})\]</span></p></li>
+</ol>
+<p><strong><u>ATTENTION PLZ !!!</u></strong></p>
+<p>信息熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集的分类情况，依据概率分布来计算。</p>
+<p>而条件熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集按照某个属性划分后，每一个划分占总体的比例来计算</p>
+<p>举栗请看《统计学习方法》P62 例5.2</p>
+<h4 id="concept_3-信息增益">Concept_3 信息增益</h4>
+<p>特征A对数据集D的信息增益<span class="math inline">\(g(D, A)\)</span>定义为：集合D的熵<span class="math inline">\(H(D)\)</span>与特征A给定条件下D的经验熵<span class="math inline">\(H(D|A)\)</span>之差，</p>
+<p>即：<span class="math display">\[g(D, A)=H(D)-H(D|A)\]</span></p>
+<p>信息增益的符号，在有些地方也用gain()表示。</p>
+<h4 id="concept_4-信息增益比">Concept_4 信息增益比</h4>
+<p>特征A对数据集D的信息增益比<span class="math inline">\(g_{R}\left ( D, A\right )\)</span>定义为：</p>
+<p>信息增益<span class="math inline">\(g(D, A)\)</span>与训练集D关于特征A的值的熵<span class="math inline">\(H_{A}(D)\)</span>的比值. 即：<span class="math display">\[g_{R}\left ( D, A\right )= \frac{g\left ( D, A \right )}{H_{A}(D)}\]</span></p>
+<p>其中，<span class="math display">\[H_{A}(D)=-\sum_{i=1}^{n}\frac{D_{i}}{D}log_{2}\frac{D_{i}}{D}\]</span></p>
+<p><span class="math inline">\(D_{i}\)</span> 是根据属性A划分出的第i个子集.</p>
+<h3 id="决策树生成">决策树生成</h3>
+<hr>
+<p>本节包含ID3、C4.5和CART算法。</p>
+<h4 id="id3算法">ID3算法</h4>
+<p>ID3算法就是在决策树的各个节点上应用信息增益来选择特征，递归的构建决策树。</p>
+<p>具体来讲：</p>
+<ol type="1">
+<li><p>从根节点开始，对节点计算所有可能的特征的信息增益；</p></li>
+<li><p>选择增益最大的特征作为节点的特征，以该特征的不同取值进行划分，建立子节点；</p></li>
+<li><p>递归下去，直到信息增益很小（人为地设置一个阈值）或者无特征为止。</p></li>
+</ol>
+<h4 id="c4.5算法">C4.5算法</h4>
+<p>与ID3的区别：</p>
+<ol type="1">
+<li><p>在特征选择时，先从候选属性中选择信息增益高于平均水平的属性，再从中选择信息增益率最高的属性；</p></li>
+<li><p>此处的阈值是信息增益比的最小值。</p></li>
+</ol>
+<h4 id="cart算法">CART算法</h4>
+<p>（待续）</p>
+<h3 id="剪枝策略">剪枝策略</h3>
+<hr>
+<h4 id="为何剪枝">为何剪枝：</h4>
+<p>决策树生成算法根据训练集递归的生成了决策树。</p>
+<p>但是这样产生的树往往对训练数据集的分类很准确，却对测试数据集却没那么准确。</p>
+<p>即发生了过拟合现象。</p>
+<p>因此我们需要把复杂的树简单化。</p>
+<h4 id="预剪枝">预剪枝</h4>
+<p>在选定了划分属性后，我们提出问题：是否应该进行这个划分？这就是预剪枝。</p>
+<p>预剪枝就是在完全正确分类训练集之前，较早地停止树的生长。</p>
+<p>具体在什么时候停止决策树的生长有多种不同的方法:</p>
+<ol type="1">
+<li><p>一种最为简单的方法就是在决策树到达一定高度的情况下就停止树的生长；’</p></li>
+<li><p>到达此结点的实例具有相同的特征向量，而不必一定属于同一类， 也可停止生长；</p></li>
+<li><p>定义一个阈值，当达到某个节点的实例个数小于阈值时就可以停止决策树的生长;</p></li>
+<li><p>一种更为普遍的做法是计算划分前后系统精度的变化。如果更加精确，则允许划分，否则不允许（西瓜书4.31.节即采用本策略）。</p></li>
+</ol>
+<h4 id="后剪枝">后剪枝</h4>
+<p>后剪枝技术要比预剪枝技术用得更加广泛。此处着重介绍。</p>
+<p><strong>方法1 - Reduced Error Pruning（西瓜书）</strong></p>
+<p>对于决策树T的每棵非叶子树S , 以“深度优先”的顺序，尝试用叶子替代这棵子树. 如果 S 被叶子替代后形成的新树关于数据集D的误差等于或小于S关于原树关于相同数据集的误差, 则用叶子替代子树S。</p>
+<p><strong>方法2 - 极小化决策树整体的损失函数（统计学习方法）</strong></p>
+<p>损失函数：<span class="math inline">\(C_α(T) = C(T)+α|T|=\sum_{t=1}^{|T|}N_tH_t(T)+α|T|\)</span></p>
+<p>其中，<span class="math inline">\(|T|\)</span>是树T的叶节点个数，<span class="math inline">\(t\)</span>是其中一个结点，<span class="math inline">\(N_t\)</span>是这个结点的样本个数，<span class="math inline">\(H_t(T)\)</span>是这个结点的经验熵。<span class="math inline">\(C(T)\)</span>表示模型对训练数据的预测误差， <span class="math inline">\(α|T|\)</span>则是正则化项。使用叶子结点的熵作为的模型的评价是因为：如果分到该叶节点的所有样本都属于同一类，那么分类效果最好，熵最小。</p>
 
       
     </div>
@@ -387,12 +446,6 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/Dive%E7%B3%BB%E5%88%97/" rel="tag"># Dive系列</a>
-          
-        </div>
-      
 
       
       
@@ -402,8 +455,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/02/15/%E3%80%90NLP%E3%80%91%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B9%A0%E7%9A%84%E8%AF%AD%E8%A8%80%E6%A8%A1%E5%9E%8B/" rel="next" title="【NLP】统计学习的语言模型">
-                <i class="fa fa-chevron-left"></i> 【NLP】统计学习的语言模型
+              <a href="/2020/02/17/%E3%80%90NLP%E3%80%91%E5%AF%B9%E8%AF%9D%E7%94%9F%E6%88%90%E4%BB%BB%E5%8A%A1%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B8%85%E7%90%86/" rel="next" title="【NLP】对话生成任务中的数据清理">
+                <i class="fa fa-chevron-left"></i> 【NLP】对话生成任务中的数据清理
               </a>
             
           </div>
@@ -411,10 +464,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2020/02/17/%E3%80%90NLP%E3%80%91%E5%AF%B9%E8%AF%9D%E7%94%9F%E6%88%90%E4%BB%BB%E5%8A%A1%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B8%85%E7%90%86/" rel="prev" title="【NLP】对话生成任务中的数据清理">
-                【NLP】对话生成任务中的数据清理 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -546,7 +595,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#循环神经网络"><span class="nav-number">1.</span> <span class="nav-text">循环神经网络</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#循环神经网络的构造"><span class="nav-number">1.1.</span> <span class="nav-text">循环神经网络的构造</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从零开始实现循环神经网络"><span class="nav-number">1.2.</span> <span class="nav-text">从零开始实现循环神经网络</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征选择"><span class="nav-number">2.</span> <span class="nav-text">特征选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_1-信息熵"><span class="nav-number">2.1.</span> <span class="nav-text">Concept_1 信息熵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_2-条件熵"><span class="nav-number">2.2.</span> <span class="nav-text">Concept_2 条件熵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_3-信息增益"><span class="nav-number">2.3.</span> <span class="nav-text">Concept_3 信息增益</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_4-信息增益比"><span class="nav-number">2.4.</span> <span class="nav-text">Concept_4 信息增益比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树生成"><span class="nav-number">3.</span> <span class="nav-text">决策树生成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#id3算法"><span class="nav-number">3.1.</span> <span class="nav-text">ID3算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c4.5算法"><span class="nav-number">3.2.</span> <span class="nav-text">C4.5算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cart算法"><span class="nav-number">3.3.</span> <span class="nav-text">CART算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#剪枝策略"><span class="nav-number">4.</span> <span class="nav-text">剪枝策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为何剪枝"><span class="nav-number">4.1.</span> <span class="nav-text">为何剪枝：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#预剪枝"><span class="nav-number">4.2.</span> <span class="nav-text">预剪枝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#后剪枝"><span class="nav-number">4.3.</span> <span class="nav-text">后剪枝</span></a></li></ol></li></ol></div>
             
 
           </div>
