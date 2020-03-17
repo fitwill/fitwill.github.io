@@ -87,7 +87,7 @@
 <meta property="og:description" content="基本概念  决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个特">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-17T05:28:58.000Z">
-<meta property="article:modified_time" content="2020-03-17T06:48:49.192Z">
+<meta property="article:modified_time" content="2020-03-17T06:51:33.260Z">
 <meta property="article:author" content="Will">
 <meta property="article:tag" content="2020秋招">
 <meta name="twitter:card" content="summary">
@@ -352,9 +352,7 @@
 <li><p><span class="math inline">\(H(Y|X)\)</span> 定义为：<u>在X给定条件下</u>，<u>Y的条件概率分布的熵</u> <u>对X的数学期望</u>；</p></li>
 <li><p>公式：<span class="math display">\[H(Y|X)=\sum_{i=1}^{n}p_{i}H(Y|X=x_{i})\]</span></p></li>
 </ol>
-<p>信息熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集的分类情况，依据概率分布来计算。</p>
-<p>而条件熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集按照某个属性划分后，每一个划分占总体的比例来计算</p>
-<p>举栗请看《统计学习方法》P62 例5.2</p>
+<p>信息熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集的分类情况，依据概率分布来计算。 而条件熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集按照某个属性划分后，每一个划分占总体的比例来计算 举栗请看《统计学习方法》P62 例5.2</p>
 <h4 id="concept_3-信息增益">Concept_3 信息增益</h4>
 <p>特征A对数据集D的信息增益<span class="math inline">\(g(D, A)\)</span>定义为：集合D的熵<span class="math inline">\(H(D)\)</span>与特征A给定条件下D的经验熵<span class="math inline">\(H(D|A)\)</span>之差，</p>
 <p>即：<span class="math display">\[g(D, A)=H(D)-H(D|A)\]</span></p>
