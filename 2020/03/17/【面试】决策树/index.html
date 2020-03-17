@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="基本概念   决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个">
+<meta name="description" content="基本概念  决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个特">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【面试】决策树">
 <meta property="og:url" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="基本概念   决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个">
+<meta property="og:description" content="基本概念  决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个特">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-03-17T05:28:58.000Z">
-<meta property="article:modified_time" content="2020-03-17T06:47:27.750Z">
+<meta property="article:modified_time" content="2020-03-17T06:48:49.192Z">
 <meta property="article:author" content="Will">
 <meta property="article:tag" content="2020秋招">
 <meta name="twitter:card" content="summary">
@@ -331,7 +331,6 @@
 
       
         <h3 id="基本概念">基本概念</h3>
-<hr>
 <ol type="1">
 <li><p>决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则；</p></li>
 <li>决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖；</li>
@@ -339,7 +338,6 @@
 <li><p>决策树学习通常包括三个步骤：特征选择、决策树生成以及决策树的剪枝。</p></li>
 </ol>
 <h3 id="特征选择">特征选择</h3>
-<hr>
 <p>既然决策树只是在不停地做 IF-THEN，那么问题就出现了：一个样本有n个属性的话，如何选择属性的优先性呢？</p>
 <p><strong>我们通常根据信息增益或者信息增益比来做特征选择，选择数值更大的属性作为划分依据。</strong></p>
 <p>那么什么是信息增益/信息增益比？这里，我们来了解以下概念。</p>
@@ -354,7 +352,6 @@
 <li><p><span class="math inline">\(H(Y|X)\)</span> 定义为：<u>在X给定条件下</u>，<u>Y的条件概率分布的熵</u> <u>对X的数学期望</u>；</p></li>
 <li><p>公式：<span class="math display">\[H(Y|X)=\sum_{i=1}^{n}p_{i}H(Y|X=x_{i})\]</span></p></li>
 </ol>
-<p><strong><u>ATTENTION PLZ !!!</u></strong></p>
 <p>信息熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集的分类情况，依据概率分布来计算。</p>
 <p>而条件熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集按照某个属性划分后，每一个划分占总体的比例来计算</p>
 <p>举栗请看《统计学习方法》P62 例5.2</p>
@@ -368,7 +365,6 @@
 <p>其中，<span class="math display">\[H_{A}(D)=-\sum_{i=1}^{n}\frac{D_{i}}{D}log_{2}\frac{D_{i}}{D}\]</span></p>
 <p><span class="math inline">\(D_{i}\)</span> 是根据属性A划分出的第i个子集.</p>
 <h3 id="决策树生成">决策树生成</h3>
-<hr>
 <p>本节包含ID3、C4.5和CART算法。</p>
 <h4 id="id3算法">ID3算法</h4>
 <p>ID3算法就是在决策树的各个节点上应用信息增益来选择特征，递归的构建决策树。</p>
@@ -387,7 +383,6 @@
 <h4 id="cart算法">CART算法</h4>
 <p>（待续）</p>
 <h3 id="剪枝策略">剪枝策略</h3>
-<hr>
 <h4 id="为何剪枝">为何剪枝：</h4>
 <p>决策树生成算法根据训练集递归的生成了决策树。</p>
 <p>但是这样产生的树往往对训练数据集的分类很准确，却对测试数据集却没那么准确。</p>
