@@ -86,11 +86,17 @@
 <meta property="og:site_name" content="GO WITH Will">
 <meta property="og:description" content="基本概念  决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个特">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318105140830.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111527018.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111742773.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318113410309.png">
 <meta property="article:published_time" content="2020-03-17T05:28:58.000Z">
-<meta property="article:modified_time" content="2020-03-17T06:51:33.260Z">
+<meta property="article:modified_time" content="2020-03-18T03:35:40.283Z">
 <meta property="article:author" content="Will">
 <meta property="article:tag" content="2020秋招">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png">
 
 
 
@@ -349,7 +355,7 @@
 </ol>
 <h4 id="concept_2-条件熵">Concept_2 条件熵</h4>
 <ol type="1">
-<li><p><span class="math inline">\(H(Y|X)\)</span> 定义为：<u>在X给定条件下</u>，<u>Y的条件概率分布的熵</u> <u>对X的数学期望</u>；</p></li>
+<li><p><span class="math inline">\(H(Y|X)\)</span> 定义为：在X给定条件下，Y的条件概率分布的熵 对X的数学期望；</p></li>
 <li><p>公式：<span class="math display">\[H(Y|X)=\sum_{i=1}^{n}p_{i}H(Y|X=x_{i})\]</span></p></li>
 </ol>
 <p>信息熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集的分类情况，依据概率分布来计算。 而条件熵里的 <span class="math inline">\(p_{i}\)</span> 的计算是根据 当前样本集按照某个属性划分后，每一个划分占总体的比例来计算 举栗请看《统计学习方法》P62 例5.2</p>
@@ -363,7 +369,7 @@
 <p>其中，<span class="math display">\[H_{A}(D)=-\sum_{i=1}^{n}\frac{D_{i}}{D}log_{2}\frac{D_{i}}{D}\]</span></p>
 <p><span class="math inline">\(D_{i}\)</span> 是根据属性A划分出的第i个子集.</p>
 <h3 id="决策树生成">决策树生成</h3>
-<p>本节包含ID3、C4.5和CART算法。</p>
+<p>本节包含ID3、C4.5和CART算法，CART放在<a href="#cartdt">CART决策树</a>部分学习。</p>
 <h4 id="id3算法">ID3算法</h4>
 <p>ID3算法就是在决策树的各个节点上应用信息增益来选择特征，递归的构建决策树。</p>
 <p>具体来讲：</p>
@@ -372,37 +378,76 @@
 <li><p>选择增益最大的特征作为节点的特征，以该特征的不同取值进行划分，建立子节点；</p></li>
 <li><p>递归下去，直到信息增益很小（人为地设置一个阈值）或者无特征为止。</p></li>
 </ol>
+<p>缺点：ID3会对 包含类别较多 的特征有选择的偏向性，因此提出c4.5算法。</p>
 <h4 id="c4.5算法">C4.5算法</h4>
 <p>与ID3的区别：</p>
 <ol type="1">
 <li><p>在特征选择时，先从候选属性中选择信息增益高于平均水平的属性，再从中选择信息增益率最高的属性；</p></li>
 <li><p>此处的阈值是信息增益比的最小值。</p></li>
 </ol>
-<h4 id="cart算法">CART算法</h4>
-<p>（待续）</p>
 <h3 id="剪枝策略">剪枝策略</h3>
 <h4 id="为何剪枝">为何剪枝：</h4>
-<p>决策树生成算法根据训练集递归的生成了决策树。</p>
-<p>但是这样产生的树往往对训练数据集的分类很准确，却对测试数据集却没那么准确。</p>
-<p>即发生了过拟合现象。</p>
-<p>因此我们需要把复杂的树简单化。</p>
+<p>决策树生成算法根据训练集递归的生成了决策树，但是这样产生的树往往对训练数据集的分类很准确，却对测试数据集却没那么准确，即发生了过拟合现象。因此我们需要把复杂的树简单化。</p>
 <h4 id="预剪枝">预剪枝</h4>
 <p>在选定了划分属性后，我们提出问题：是否应该进行这个划分？这就是预剪枝。</p>
 <p>预剪枝就是在完全正确分类训练集之前，较早地停止树的生长。</p>
 <p>具体在什么时候停止决策树的生长有多种不同的方法:</p>
 <ol type="1">
-<li><p>一种最为简单的方法就是在决策树到达一定高度的情况下就停止树的生长；’</p></li>
-<li><p>到达此结点的实例具有相同的特征向量，而不必一定属于同一类， 也可停止生长；</p></li>
-<li><p>定义一个阈值，当达到某个节点的实例个数小于阈值时就可以停止决策树的生长;</p></li>
-<li><p>一种更为普遍的做法是计算划分前后系统精度的变化。如果更加精确，则允许划分，否则不允许（西瓜书4.31.节即采用本策略）。</p></li>
+<li>最为简单的方法：在决策树到达一定高度的情况下就停止树的生长；</li>
+<li>定义一个阈值，当达到某个节点的实例个数小于阈值时就可以停止决策树的生长;</li>
+<li>一种更为普遍的做法是计算划分前后系统精度的变化。如果更加精确，则允许划分，否则不允许（西瓜书4.31.节即采用本策略）。</li>
 </ol>
+<p>优点降低了过拟合，减少训练时间，<strong><em>缺点容易带来欠拟合</em></strong>。</p>
 <h4 id="后剪枝">后剪枝</h4>
 <p>后剪枝技术要比预剪枝技术用得更加广泛。此处着重介绍。</p>
 <p><strong>方法1 - Reduced Error Pruning（西瓜书）</strong></p>
-<p>对于决策树T的每棵非叶子树S , 以“深度优先”的顺序，尝试用叶子替代这棵子树. 如果 S 被叶子替代后形成的新树关于数据集D的误差等于或小于S关于原树关于相同数据集的误差, 则用叶子替代子树S。</p>
+<p>对于决策树T的每棵非叶子树S , 以“深度优先”的顺序，尝试用叶子替代这棵子树. 如果 S 被叶子替代后形成的新树关于数据集D的分类准确率等于或大于原树关于相同数据集D的准确率, 则用叶子替代子树S。</p>
 <p><strong>方法2 - 极小化决策树整体的损失函数（统计学习方法）</strong></p>
-<p>损失函数：<span class="math inline">\(C_α(T) = C(T)+α|T|=\sum_{t=1}^{|T|}N_tH_t(T)+α|T|\)</span></p>
-<p>其中，<span class="math inline">\(|T|\)</span>是树T的叶节点个数，<span class="math inline">\(t\)</span>是其中一个结点，<span class="math inline">\(N_t\)</span>是这个结点的样本个数，<span class="math inline">\(H_t(T)\)</span>是这个结点的经验熵。<span class="math inline">\(C(T)\)</span>表示模型对训练数据的预测误差， <span class="math inline">\(α|T|\)</span>则是正则化项。使用叶子结点的熵作为的模型的评价是因为：如果分到该叶节点的所有样本都属于同一类，那么分类效果最好，熵最小。</p>
+<p>损失函数：</p>
+<p><span class="math inline">\(C_α(T) = C(T)+α|T|=\sum_{t=1}^{|T|}N_tH_t(T)+α|T|\)</span></p>
+<p><span class="math inline">\(H_t(T)=−\sum_{k}\frac{N_{tk}}{N_t}log\frac{N_{tk}}{N_t}\)</span></p>
+<p>其中，<span class="math inline">\(|T|\)</span>是树<span class="math inline">\(T\)</span>的叶节点个数，<span class="math inline">\(t\)</span>是其中一个结点，<span class="math inline">\(N_t\)</span>是这个结点的样本个数，<span class="math inline">\(H_t(T)\)</span>是这个结点的经验熵（就是普通的熵）。<span class="math inline">\(C(T)\)</span>表示模型对训练数据的预测误差，即模型与训练数据的拟合程度， <span class="math inline">\(|T|\)</span>是模型的复杂程度，<span class="math inline">\(\alpha\)</span>用来控制两者之间的关系。使用叶子结点的熵作为的模型的评价是因为：如果分到该叶节点的所有样本都属于同一类，不确定数量 = 不确定度 * 样本数量，那么分类效果最好，熵最小。</p>
+<p>在这里我存在疑问：</p>
+<p>叶结点上为什么存在k类样本点？即在该叶结点上，所有类别标签应该都是一致的。</p>
+<p>可能解释：</p>
+<ol type="1">
+<li>在该叶结点上没有足够的特征信息再把不一致的标签分开；</li>
+<li>存在噪声点，何谓噪声，在类群中有极少个与类群不符的标签。</li>
+</ol>
+<h3 id="cart决策树"><span id="cartdt">CART决策树</span></h3>
+<p>CART决策树全称为classification and regression tree，CART假设决策树是二叉树，内部结点特征的取值为是和否，等价于递归地二分每个特征。</p>
+<h4 id="cart-回归树">CART 回归树</h4>
+<p>见<a href="https://blog.csdn.net/aaa_aaa1sdf/article/details/81588382" target="_blank" rel="noopener">CART回归树原理及示例</a>。</p>
+<p>####CART分类树</p>
+<p>分类树用Gini index选择最优的特征，同时决定该特征下的最优二分点。</p>
+<p>####Concept_5 Gini index</p>
+<p>假设有K个类，样本点属于第k类的概率为<span class="math inline">\(p_k\)</span>，则概率分布的Gini index定义为：</p>
+<p><span class="math inline">\(Gini(p) = \sum_{k=1}^{K}p_k(1-p_k)=1-\sum_{k=1}^{K}p_k^2\)</span></p>
+<p>对于二分类问题，假设样本点是第一类的概率为<span class="math inline">\(p\)</span>，则概率分布的Gini index为：</p>
+<p><span class="math inline">\(Gini(p) = 2p(1-p)\)</span></p>
+<p>对于给定的样本集合D，把概率写作数量的比值，其Gini index为：</p>
+<p><span class="math inline">\(Gini(D) = 1-\sum_{k=1}^{K}(\frac{|C_k|}{|D|})^2\)</span></p>
+<p>如果样本集合D根据特征A是否取某一可能的值a被分割成了<span class="math inline">\(D_1\)</span>和<span class="math inline">\(D_2\)</span>两个部分，则在特征A的条件下，集合D的基尼指数定义为：</p>
+<p><span class="math inline">\(Gini(D, A)=\frac{|D_1|}{|D|}Gini(D_1) + \frac{|D_2|}{|D|}Gini(D_2)\)</span></p>
+<p><span class="math inline">\(Gini(D)\)</span>代表集合<span class="math inline">\(D\)</span>的不确定性，<span class="math inline">\(Gini(D, A)\)</span>表示经<span class="math inline">\(A=a\)</span>分割后集合<span class="math inline">\(D\)</span>的不确定性。Gini index越大，样本的不确定性就越大。</p>
+<h4 id="cart分类树的生成">CART分类树的生成</h4>
+<p>伪代码总结为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>  A <span class="keyword">in</span> feature space:</span><br><span class="line">	<span class="keyword">for</span> a <span class="keyword">in</span> A.values:</span><br><span class="line">		calculateGini(A = a)</span><br><span class="line">choose the lowest Gini index</span><br></pre></td></tr></table></figure>
+<p>《统计学习方法》相关描述为：</p>
+<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png" alt="image-20200318104650131" style="zoom: 50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318105140830.png" alt="image-20200318105013644" style="zoom:50%;"></p>
+<h4 id="cart剪枝">CART剪枝</h4>
+<p>基本思路：CART剪枝算法从“完全生长”的决策树的底端剪去一些子树，使决策树变小（模型变简单），从而能够对未知数据有更准确的预测。CART剪枝算法由两步组成：1. 首先从生成算法产生的决策树<span class="math inline">\(T_0\)</span>底端开始不断剪枝，直到<span class="math inline">\(T_0\)</span>的根结点，形成一个子树序列{<span class="math inline">\(T_0\)</span>,<span class="math inline">\(T_1\)</span>,...,<span class="math inline">\(T_n\)</span>}；2. 然后通过交叉验证法在独立的验证数据集上对子树序列进行测试，从中选择最优子树。</p>
+<p>接下来截取统计学习方法的内容。</p>
+<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111527018.png" alt="image-20200318111527018" style="zoom:50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111742773.png" alt="image-20200318111742773" style="zoom:50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318113410309.png" alt="image-20200318113410309" style="zoom:50%;"></p>
+<h4 id="cart剪枝的原理思考">CART剪枝的原理思考</h4>
+<p>loss function的定义为：</p>
+<p><span class="math inline">\(C_α(T) = C(T)+α|T|=\sum_{t=1}^{|T|}N_tH_t(T)+α|T|\)</span></p>
+<p>对其进行变形：</p>
+<p><span class="math inline">\(C_α(T) =\sum_{t=1}^{|T|}(N_tH_t(T)+α)\)</span></p>
+<p>由此看出，衡量损失函数大小的真正贡献在于每一棵子树的叶结点，叶结点不确定次数的累加并加个常数$$就是决策树整体的损失函数。</p>
 
       
     </div>
@@ -573,7 +618,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征选择"><span class="nav-number">2.</span> <span class="nav-text">特征选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_1-信息熵"><span class="nav-number">2.1.</span> <span class="nav-text">Concept_1 信息熵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_2-条件熵"><span class="nav-number">2.2.</span> <span class="nav-text">Concept_2 条件熵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_3-信息增益"><span class="nav-number">2.3.</span> <span class="nav-text">Concept_3 信息增益</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_4-信息增益比"><span class="nav-number">2.4.</span> <span class="nav-text">Concept_4 信息增益比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树生成"><span class="nav-number">3.</span> <span class="nav-text">决策树生成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#id3算法"><span class="nav-number">3.1.</span> <span class="nav-text">ID3算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c4.5算法"><span class="nav-number">3.2.</span> <span class="nav-text">C4.5算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cart算法"><span class="nav-number">3.3.</span> <span class="nav-text">CART算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#剪枝策略"><span class="nav-number">4.</span> <span class="nav-text">剪枝策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为何剪枝"><span class="nav-number">4.1.</span> <span class="nav-text">为何剪枝：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#预剪枝"><span class="nav-number">4.2.</span> <span class="nav-text">预剪枝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#后剪枝"><span class="nav-number">4.3.</span> <span class="nav-text">后剪枝</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基本概念"><span class="nav-number">1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特征选择"><span class="nav-number">2.</span> <span class="nav-text">特征选择</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_1-信息熵"><span class="nav-number">2.1.</span> <span class="nav-text">Concept_1 信息熵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_2-条件熵"><span class="nav-number">2.2.</span> <span class="nav-text">Concept_2 条件熵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_3-信息增益"><span class="nav-number">2.3.</span> <span class="nav-text">Concept_3 信息增益</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#concept_4-信息增益比"><span class="nav-number">2.4.</span> <span class="nav-text">Concept_4 信息增益比</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#决策树生成"><span class="nav-number">3.</span> <span class="nav-text">决策树生成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#id3算法"><span class="nav-number">3.1.</span> <span class="nav-text">ID3算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#c4.5算法"><span class="nav-number">3.2.</span> <span class="nav-text">C4.5算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#剪枝策略"><span class="nav-number">4.</span> <span class="nav-text">剪枝策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#为何剪枝"><span class="nav-number">4.1.</span> <span class="nav-text">为何剪枝：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#预剪枝"><span class="nav-number">4.2.</span> <span class="nav-text">预剪枝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#后剪枝"><span class="nav-number">4.3.</span> <span class="nav-text">后剪枝</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cart决策树"><span class="nav-number">5.</span> <span class="nav-text">CART决策树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cart-回归树"><span class="nav-number">5.1.</span> <span class="nav-text">CART 回归树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cart分类树的生成"><span class="nav-number">5.2.</span> <span class="nav-text">CART分类树的生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cart剪枝"><span class="nav-number">5.3.</span> <span class="nav-text">CART剪枝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cart剪枝的原理思考"><span class="nav-number">5.4.</span> <span class="nav-text">CART剪枝的原理思考</span></a></li></ol></li></ol></div>
             
 
           </div>
