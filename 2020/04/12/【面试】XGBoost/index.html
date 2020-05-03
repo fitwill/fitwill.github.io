@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="CS224N," />
+  <meta name="keywords" content="2020秋招，机器学习基础," />
 
 
 
@@ -79,22 +79,18 @@
 
 
 
-<meta name="description" content="1   2   3">
+<meta name="description" content="自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。 XGBoost的全称为eXtreme Gradient Boosting，即极端梯度提升树。要深入理解整个XGBoost模型系统，建议还是要">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【NLP】L1. Introduction and Word Vectors">
-<meta property="og:url" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/index.html">
+<meta property="og:title" content="【面试】XGBoost">
+<meta property="og:url" content="http://willzhang.tech/2020/04/12/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91XGBoost/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="1   2   3">
+<meta property="og:description" content="自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。 XGBoost的全称为eXtreme Gradient Boosting，即极端梯度提升树。要深入理解整个XGBoost模型系统，建议还是要">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/1.jpg">
-<meta property="og:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/2.jpg">
-<meta property="og:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/3.jpg">
-<meta property="article:published_time" content="2020-01-18T04:01:58.000Z">
-<meta property="article:modified_time" content="2020-03-14T04:31:06.899Z">
+<meta property="article:published_time" content="2020-04-12T08:28:58.000Z">
+<meta property="article:modified_time" content="2020-04-12T05:03:37.005Z">
 <meta property="article:author" content="Will">
-<meta property="article:tag" content="CS224N">
+<meta property="article:tag" content="2020秋招，机器学习基础">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/1.jpg">
 
 
 
@@ -124,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://willzhang.tech/2020/01/18/【NLP】L1. Introduction and Word Vectors/"/>
+  <link rel="canonical" href="http://willzhang.tech/2020/04/12/【面试】XGBoost/"/>
 
 
 
 
 
-  <title>【NLP】L1. Introduction and Word Vectors | GO WITH Will</title>
+  <title>【面试】XGBoost | GO WITH Will</title>
   
 
 
@@ -267,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/04/12/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91XGBoost/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Will">
@@ -284,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【NLP】L1. Introduction and Word Vectors</h1>
+          <h1 class="post-title" itemprop="name headline">【面试】XGBoost</h1>
         
 
         <div class="post-meta">
@@ -296,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-18T12:01:58+08:00">
-                2020-01-18
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-12T16:28:58+08:00">
+                2020-04-12
               </time>
             
 
@@ -306,28 +302,6 @@
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/" itemprop="url" rel="index">
-                    <span itemprop="name">NLP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -356,15 +330,10 @@
       
 
       
-        <figure>
-<img src="/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/1.jpg" alt="1"><figcaption>1</figcaption>
-</figure>
-<figure>
-<img src="/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/2.jpg" alt="2"><figcaption>2</figcaption>
-</figure>
-<figure>
-<img src="/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/3.jpg" alt="3"><figcaption>3</figcaption>
-</figure>
+        <p>自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。</p>
+<p>XGBoost的全称为eXtreme Gradient Boosting，即极端梯度提升树。要深入理解整个XGBoost模型系统，建议还是要认真研读陈天奇的 <strong>XGBoost: A Scalable Tree Boosting System</strong> 论文，深入损失函数的推导，这样才能更好的掌握XGBoost。本文仅对模型最重要的部分，即XGBoost损失函数的数学推导过程和结点分裂的增益计算方式进行阐述。</p>
+<p>###XGBoost原理推导</p>
+<p>既然XGBoost整体上仍然属于GBDT系统，那么XGBoost也一定是由多个基模型组成的一个加法模型，所以XGBoost可表示为：</p>
 
       
     </div>
@@ -382,7 +351,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/CS224N/" rel="tag"># CS224N</a>
+            <a href="/tags/2020%E7%A7%8B%E6%8B%9B%EF%BC%8C%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag"># 2020秋招，机器学习基础</a>
           
         </div>
       
@@ -395,8 +364,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/01/11/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2020/03/24/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91GBDT/" rel="next" title="【面试】GBDT">
+                <i class="fa fa-chevron-left"></i> 【面试】GBDT
               </a>
             
           </div>
@@ -405,8 +374,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/02/10/%E3%80%90GNN%E3%80%91Note%EF%BC%9A%E5%9B%BE%E6%B7%B1%E5%BA%A6%E8%A1%A8%E7%A4%BA%E5%9F%BA%E7%A1%80%E5%92%8C%E5%89%8D%E6%B2%BF%E8%BF%9B%E5%B1%95/" rel="prev" title="【GNN】Note：图深度表示基础和前沿进展">
-                【GNN】Note：图深度表示基础和前沿进展 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/05/03/linux%E6%8C%87%E4%BB%A4/" rel="prev" title="Linux常用指令速查">
+                Linux常用指令速查 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

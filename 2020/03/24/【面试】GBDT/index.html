@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="CS224N," />
+  <meta name="keywords" content="2020秋招，机器学习基础," />
 
 
 
@@ -79,22 +79,18 @@
 
 
 
-<meta name="description" content="1   2   3">
+<meta name="description" content="概述 GBDT全称为Gradient Boosting Decison Tree，是boosting家族的一员，其弱学习器限定只能用CART回归树模型。在GBDT的迭代中，假设我们前一轮迭代得到的强学习器是\(f_{𝑡−1}(𝑥)\), 损失函数是\(𝐿(𝑦,𝑓_{𝑡−1}(𝑥))\)，我们本轮迭代的目标是找到一个CART回归树模型的弱学习器\(ℎ_𝑡(𝑥)\)，最小化本轮的损失">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【NLP】L1. Introduction and Word Vectors">
-<meta property="og:url" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/index.html">
+<meta property="og:title" content="【面试】GBDT">
+<meta property="og:url" content="http://willzhang.tech/2020/03/24/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91GBDT/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="1   2   3">
+<meta property="og:description" content="概述 GBDT全称为Gradient Boosting Decison Tree，是boosting家族的一员，其弱学习器限定只能用CART回归树模型。在GBDT的迭代中，假设我们前一轮迭代得到的强学习器是\(f_{𝑡−1}(𝑥)\), 损失函数是\(𝐿(𝑦,𝑓_{𝑡−1}(𝑥))\)，我们本轮迭代的目标是找到一个CART回归树模型的弱学习器\(ℎ_𝑡(𝑥)\)，最小化本轮的损失">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/1.jpg">
-<meta property="og:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/2.jpg">
-<meta property="og:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/3.jpg">
-<meta property="article:published_time" content="2020-01-18T04:01:58.000Z">
-<meta property="article:modified_time" content="2020-03-14T04:31:06.899Z">
+<meta property="article:published_time" content="2020-03-24T08:28:58.000Z">
+<meta property="article:modified_time" content="2020-03-24T08:46:03.434Z">
 <meta property="article:author" content="Will">
-<meta property="article:tag" content="CS224N">
+<meta property="article:tag" content="2020秋招，机器学习基础">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/1.jpg">
 
 
 
@@ -124,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://willzhang.tech/2020/01/18/【NLP】L1. Introduction and Word Vectors/"/>
+  <link rel="canonical" href="http://willzhang.tech/2020/03/24/【面试】GBDT/"/>
 
 
 
 
 
-  <title>【NLP】L1. Introduction and Word Vectors | GO WITH Will</title>
+  <title>【面试】GBDT | GO WITH Will</title>
   
 
 
@@ -267,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/03/24/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91GBDT/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Will">
@@ -284,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【NLP】L1. Introduction and Word Vectors</h1>
+          <h1 class="post-title" itemprop="name headline">【面试】GBDT</h1>
         
 
         <div class="post-meta">
@@ -296,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-01-18T12:01:58+08:00">
-                2020-01-18
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-24T16:28:58+08:00">
+                2020-03-24
               </time>
             
 
@@ -306,28 +302,6 @@
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">In</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/" itemprop="url" rel="index">
-                    <span itemprop="name">NLP</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -356,15 +330,11 @@
       
 
       
-        <figure>
-<img src="/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/1.jpg" alt="1"><figcaption>1</figcaption>
-</figure>
-<figure>
-<img src="/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/2.jpg" alt="2"><figcaption>2</figcaption>
-</figure>
-<figure>
-<img src="/2020/01/18/%E3%80%90NLP%E3%80%91L1.%20Introduction%20and%20Word%20Vectors/3.jpg" alt="3"><figcaption>3</figcaption>
-</figure>
+        <h3 id="概述">概述</h3>
+<p>GBDT全称为Gradient Boosting Decison Tree，是boosting家族的一员，其弱学习器限定只能用CART回归树模型。在GBDT的迭代中，假设我们前一轮迭代得到的强学习器是<span class="math inline">\(f_{𝑡−1}(𝑥)\)</span>, 损失函数是<span class="math inline">\(𝐿(𝑦,𝑓_{𝑡−1}(𝑥))\)</span>，我们本轮迭代的目标是找到一个CART回归树模型的弱学习器<span class="math inline">\(ℎ_𝑡(𝑥)\)</span>，最小化本轮的损失函数<span class="math display">\[ L(y,f_t(x)=L(y, f_{t−1}(x)+h_t(x))\]</span>也就是说，本轮迭代找到决策树，要让样本的损失尽量变得更小。</p>
+<p>GBDT的思想可以用一个通俗的例子解释，假如有个人30岁，我们首先用20岁去拟合，发现损失有10岁，这时我们用6岁去拟合剩下的损失，发现差距还有4岁，第三轮我们用3岁拟合剩下的差距，差距就只有一岁了。如果我们的迭代轮数还没有完，可以继续迭代下面，每一轮迭代，拟合的岁数误差都会减小。最终把每棵树的结论加起来，本例中即为 20+6+3+1 = 30。实际工程中，GBDT是计算负梯度，用负梯度近似残差。</p>
+<h3 id="gbdt的负梯度拟合">GBDT的负梯度拟合</h3>
+<p>Freidman提出了用损失函数的负梯度来拟合本轮损失的近似值，进而拟合一个CART回归树。第<span class="math inline">\(t\)</span>轮的第<span class="math inline">\(i\)</span>个样本的损失函数的负梯度表示为</p>
 
       
     </div>
@@ -382,7 +352,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/CS224N/" rel="tag"># CS224N</a>
+            <a href="/tags/2020%E7%A7%8B%E6%8B%9B%EF%BC%8C%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag"># 2020秋招，机器学习基础</a>
           
         </div>
       
@@ -395,8 +365,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/01/11/hello-world/" rel="next" title="Hello World">
-                <i class="fa fa-chevron-left"></i> Hello World
+              <a href="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/" rel="next" title="【面试】决策树">
+                <i class="fa fa-chevron-left"></i> 【面试】决策树
               </a>
             
           </div>
@@ -405,8 +375,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/02/10/%E3%80%90GNN%E3%80%91Note%EF%BC%9A%E5%9B%BE%E6%B7%B1%E5%BA%A6%E8%A1%A8%E7%A4%BA%E5%9F%BA%E7%A1%80%E5%92%8C%E5%89%8D%E6%B2%BF%E8%BF%9B%E5%B1%95/" rel="prev" title="【GNN】Note：图深度表示基础和前沿进展">
-                【GNN】Note：图深度表示基础和前沿进展 <i class="fa fa-chevron-right"></i>
+              <a href="/2020/04/12/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91XGBoost/" rel="prev" title="【面试】XGBoost">
+                【面试】XGBoost <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -459,8 +429,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -520,6 +499,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gbdt的负梯度拟合"><span class="nav-number">2.</span> <span class="nav-text">GBDT的负梯度拟合</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
