@@ -68,7 +68,7 @@
 
 
 
-  <meta name="keywords" content="Hexo, NexT" />
+  <meta name="keywords" content="机器学习基础," />
 
 
 
@@ -81,21 +81,22 @@
 
 <meta name="description" content="基本概念  决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个特">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【面试】决策树">
-<meta property="og:url" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/index.html">
+<meta property="og:title" content="【机器学习基础】决策树">
+<meta property="og:url" content="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/index.html">
 <meta property="og:site_name" content="GO WITH Will">
 <meta property="og:description" content="基本概念  决策树是极其接近人类思维的一种机器学习算法，没有包含很复杂的数学模型。其本质是从训练数据集中归纳出一条分类规则； 决策树的判别过程可以视作 IF-THEN 模型，即：根据样本某个特征的取值，不断地判别下去，对数据集做划分，直至归类成功；IF-THEN 是互斥且完备的，即：每一个样本点都被一条且仅被一条决策的路径所覆盖； 决策树是树型结构，其根节点为全部样本点的集合，中间结点表示某一个特">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png">
-<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318105140830.png">
-<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111527018.png">
-<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111742773.png">
-<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318113410309.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318105140830.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111527018.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111742773.png">
+<meta property="og:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318113410309.png">
 <meta property="article:published_time" content="2020-03-17T05:28:58.000Z">
-<meta property="article:modified_time" content="2020-03-24T08:06:04.748Z">
+<meta property="article:modified_time" content="2020-05-05T09:40:35.919Z">
 <meta property="article:author" content="Will">
+<meta property="article:tag" content="机器学习基础">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png">
+<meta name="twitter:image" content="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png">
 
 
 
@@ -125,13 +126,13 @@
 
 
 
-  <link rel="canonical" href="http://willzhang.tech/2020/03/17/【面试】决策树/"/>
+  <link rel="canonical" href="http://willzhang.tech/2020/03/17/【机器学习基础】决策树/"/>
 
 
 
 
 
-  <title>【面试】决策树 | GO WITH Will</title>
+  <title>【机器学习基础】决策树 | GO WITH Will</title>
   
 
 
@@ -268,7 +269,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Will">
@@ -285,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【面试】决策树</h1>
+          <h1 class="post-title" itemprop="name headline">【机器学习基础】决策树</h1>
         
 
         <div class="post-meta">
@@ -433,14 +434,14 @@
 <p>伪代码总结为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span>  A <span class="keyword">in</span> feature space:</span><br><span class="line">	<span class="keyword">for</span> a <span class="keyword">in</span> A.values:</span><br><span class="line">		calculateGini(A = a)</span><br><span class="line">choose the lowest Gini index</span><br></pre></td></tr></table></figure>
 <p>《统计学习方法》相关描述为：</p>
-<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png" alt="image-20200318104650131" style="zoom: 50%;"></p>
-<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318105140830.png" alt="image-20200318105013644" style="zoom:50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318104650131.png" alt="image-20200318104650131" style="zoom: 50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318105140830.png" alt="image-20200318105013644" style="zoom:50%;"></p>
 <h4 id="cart剪枝">CART剪枝</h4>
 <p>基本思路：CART剪枝算法从“完全生长”的决策树的底端剪去一些子树，使决策树变小（模型变简单），从而能够对未知数据有更准确的预测。CART剪枝算法由两步组成：1. 首先从生成算法产生的决策树<span class="math inline">\(T_0\)</span>底端开始不断剪枝，直到<span class="math inline">\(T_0\)</span>的根结点，形成一个子树序列{<span class="math inline">\(T_0\)</span>,<span class="math inline">\(T_1\)</span>,...,<span class="math inline">\(T_n\)</span>}；2. 然后通过交叉验证法在独立的验证数据集上对子树序列进行测试，从中选择最优子树。</p>
 <p>接下来截取统计学习方法的内容。</p>
-<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111527018.png" alt="image-20200318111527018" style="zoom:50%;"></p>
-<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111742773.png" alt="image-20200318111742773" style="zoom:50%;"></p>
-<p><img src="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318113410309.png" alt="image-20200318113410309" style="zoom:50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111527018.png" alt="image-20200318111527018" style="zoom:50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318111742773.png" alt="image-20200318111742773" style="zoom:50%;"></p>
+<p><img src="/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/image-20200318113410309.png" alt="image-20200318113410309" style="zoom:50%;"></p>
 <h4 id="cart剪枝的原理思考">CART剪枝的原理思考</h4>
 <p>loss function的定义为：</p>
 <p><span class="math display">\[C_α(T) = C(T)+α|T|=\sum_{t=1}^{|T|}N_tH_t(T)+α|T|\]</span></p>
@@ -462,6 +463,12 @@
 
     <footer class="post-footer">
       
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" rel="tag"># 机器学习基础</a>
+          
+        </div>
+      
 
       
       
@@ -471,8 +478,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/17/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/" rel="next" title="【机器学习基础】决策树">
-                <i class="fa fa-chevron-left"></i> 【机器学习基础】决策树
+              <a href="/2020/02/17/%E3%80%90NLP%E3%80%91%E5%AF%B9%E8%AF%9D%E7%94%9F%E6%88%90%E4%BB%BB%E5%8A%A1%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E6%B8%85%E7%90%86/" rel="next" title="【NLP】对话生成任务中的数据清理">
+                <i class="fa fa-chevron-left"></i> 【NLP】对话生成任务中的数据清理
               </a>
             
           </div>
@@ -481,8 +488,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/03/24/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91GBDT/" rel="prev" title="【机器学习基础】GBDT">
-                【机器学习基础】GBDT <i class="fa fa-chevron-right"></i>
+              <a href="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/" rel="prev" title="【面试】决策树">
+                【面试】决策树 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>

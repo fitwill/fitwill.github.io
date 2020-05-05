@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="概述 GBDT全称为Gradient Boosting Decison Tree，是boosting家族的一员，其弱学习器限定只能用CART回归树模型。在GBDT的迭代中，假设我们前一轮迭代得到的强学习器是\(f_{𝑡−1}(𝑥)\), 损失函数是\(𝐿(𝑦,𝑓_{𝑡−1}(𝑥))\)，我们本轮迭代的目标是找到一个CART回归树模型的弱学习器\(ℎ_𝑡(𝑥)\)，最小化本轮的损失">
+<meta name="description" content="自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。 XGBoost的全称为eXtreme Gradient Boosting，即极端梯度提升树。要深入理解整个XGBoost模型系统，建议还是要">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【面试】GBDT">
-<meta property="og:url" content="http://willzhang.tech/2020/03/24/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91GBDT/index.html">
+<meta property="og:title" content="【机器学习基础】XGBoost">
+<meta property="og:url" content="http://willzhang.tech/2020/04/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="概述 GBDT全称为Gradient Boosting Decison Tree，是boosting家族的一员，其弱学习器限定只能用CART回归树模型。在GBDT的迭代中，假设我们前一轮迭代得到的强学习器是\(f_{𝑡−1}(𝑥)\), 损失函数是\(𝐿(𝑦,𝑓_{𝑡−1}(𝑥))\)，我们本轮迭代的目标是找到一个CART回归树模型的弱学习器\(ℎ_𝑡(𝑥)\)，最小化本轮的损失">
+<meta property="og:description" content="自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。 XGBoost的全称为eXtreme Gradient Boosting，即极端梯度提升树。要深入理解整个XGBoost模型系统，建议还是要">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-03-24T08:28:58.000Z">
-<meta property="article:modified_time" content="2020-03-24T08:46:03.434Z">
+<meta property="article:published_time" content="2020-04-12T08:28:58.000Z">
+<meta property="article:modified_time" content="2020-05-05T09:39:44.881Z">
 <meta property="article:author" content="Will">
 <meta property="article:tag" content="2020秋招，机器学习基础">
 <meta name="twitter:card" content="summary">
@@ -120,13 +120,13 @@
 
 
 
-  <link rel="canonical" href="http://willzhang.tech/2020/03/24/【面试】GBDT/"/>
+  <link rel="canonical" href="http://willzhang.tech/2020/04/12/【机器学习基础】XGBoost/"/>
 
 
 
 
 
-  <title>【面试】GBDT | GO WITH Will</title>
+  <title>【机器学习基础】XGBoost | GO WITH Will</title>
   
 
 
@@ -263,7 +263,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/03/24/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91GBDT/">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/04/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Will">
@@ -280,7 +280,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">【面试】GBDT</h1>
+          <h1 class="post-title" itemprop="name headline">【机器学习基础】XGBoost</h1>
         
 
         <div class="post-meta">
@@ -292,8 +292,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-03-24T16:28:58+08:00">
-                2020-03-24
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-04-12T16:28:58+08:00">
+                2020-04-12
               </time>
             
 
@@ -330,11 +330,10 @@
       
 
       
-        <h3 id="概述">概述</h3>
-<p>GBDT全称为Gradient Boosting Decison Tree，是boosting家族的一员，其弱学习器限定只能用CART回归树模型。在GBDT的迭代中，假设我们前一轮迭代得到的强学习器是<span class="math inline">\(f_{𝑡−1}(𝑥)\)</span>, 损失函数是<span class="math inline">\(𝐿(𝑦,𝑓_{𝑡−1}(𝑥))\)</span>，我们本轮迭代的目标是找到一个CART回归树模型的弱学习器<span class="math inline">\(ℎ_𝑡(𝑥)\)</span>，最小化本轮的损失函数<span class="math display">\[ L(y,f_t(x)=L(y, f_{t−1}(x)+h_t(x))\]</span>也就是说，本轮迭代找到决策树，要让样本的损失尽量变得更小。</p>
-<p>GBDT的思想可以用一个通俗的例子解释，假如有个人30岁，我们首先用20岁去拟合，发现损失有10岁，这时我们用6岁去拟合剩下的损失，发现差距还有4岁，第三轮我们用3岁拟合剩下的差距，差距就只有一岁了。如果我们的迭代轮数还没有完，可以继续迭代下面，每一轮迭代，拟合的岁数误差都会减小。最终把每棵树的结论加起来，本例中即为 20+6+3+1 = 30。实际工程中，GBDT是计算负梯度，用负梯度近似残差。</p>
-<h3 id="gbdt的负梯度拟合">GBDT的负梯度拟合</h3>
-<p>Freidman提出了用损失函数的负梯度来拟合本轮损失的近似值，进而拟合一个CART回归树。第<span class="math inline">\(t\)</span>轮的第<span class="math inline">\(i\)</span>个样本的损失函数的负梯度表示为</p>
+        <p>自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。</p>
+<p>XGBoost的全称为eXtreme Gradient Boosting，即极端梯度提升树。要深入理解整个XGBoost模型系统，建议还是要认真研读陈天奇的 <strong>XGBoost: A Scalable Tree Boosting System</strong> 论文，深入损失函数的推导，这样才能更好的掌握XGBoost。本文仅对模型最重要的部分，即XGBoost损失函数的数学推导过程和结点分裂的增益计算方式进行阐述。</p>
+<p>###XGBoost原理推导</p>
+<p>既然XGBoost整体上仍然属于GBDT系统，那么XGBoost也一定是由多个基模型组成的一个加法模型，所以XGBoost可表示为：</p>
 
       
     </div>
@@ -365,8 +364,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/03/17/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91%E5%86%B3%E7%AD%96%E6%A0%91/" rel="next" title="【面试】决策树">
-                <i class="fa fa-chevron-left"></i> 【面试】决策树
+              <a href="/2020/03/24/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91GBDT/" rel="next" title="【机器学习基础】GBDT">
+                <i class="fa fa-chevron-left"></i> 【机器学习基础】GBDT
               </a>
             
           </div>
@@ -375,8 +374,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/04/12/%E3%80%90%E9%9D%A2%E8%AF%95%E3%80%91XGBoost/" rel="prev" title="【面试】XGBoost">
-                【面试】XGBoost <i class="fa fa-chevron-right"></i>
+              <a href="/2020/05/03/linux%E6%8C%87%E4%BB%A4/" rel="prev" title="Linux常用指令速查">
+                Linux常用指令速查 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -429,17 +428,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            Overview
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -454,7 +444,7 @@
               
                 <a href="/archives/%7C%7Carchive">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">13</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
@@ -465,7 +455,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-count">4</span>
                   <span class="site-state-item-name">categories</span>
                 </a>
               </div>
@@ -476,7 +466,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-count">7</span>
                   <span class="site-state-item-name">tags</span>
                 </a>
               </div>
@@ -499,22 +489,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#gbdt的负梯度拟合"><span class="nav-number">2.</span> <span class="nav-text">GBDT的负梯度拟合</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
