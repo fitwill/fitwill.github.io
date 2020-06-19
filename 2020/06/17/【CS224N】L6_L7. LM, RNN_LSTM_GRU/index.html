@@ -79,12 +79,12 @@
 
 
 
-<meta name="description" content="【CS224N】L6_L7. LM, RNN_LSTM_GRU  L6和L7从Language model出发，讲解了NLP中非常常见的RNN以及各种variants。主要包含以下内容：  Language model RNN Gradient vanishing&#x2F;exploding LSTM GRU Bidirectional RNN Deep RNN   n-gram Language Mod">
+<meta name="description" content="【CS224N】L6_L7. LM, RNN_LSTM_GRU L6和L7从Language model出发，讲解了NLP中非常常见的RNN以及各种variants。主要包含以下内容：  Language model RNN Gradient vanishing&#x2F;exploding LSTM GRU Bidirectional RNN Deep RNN  N-gram Language Model">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【CS224N】L6&#x2F;L7. LM, RNN&#x2F;LSTM&#x2F;GRU">
 <meta property="og:url" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="【CS224N】L6_L7. LM, RNN_LSTM_GRU  L6和L7从Language model出发，讲解了NLP中非常常见的RNN以及各种variants。主要包含以下内容：  Language model RNN Gradient vanishing&#x2F;exploding LSTM GRU Bidirectional RNN Deep RNN   n-gram Language Mod">
+<meta property="og:description" content="【CS224N】L6_L7. LM, RNN_LSTM_GRU L6和L7从Language model出发，讲解了NLP中非常常见的RNN以及各种variants。主要包含以下内容：  Language model RNN Gradient vanishing&#x2F;exploding LSTM GRU Bidirectional RNN Deep RNN  N-gram Language Model">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200616235905326.png">
 <meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200616235519607.png">
@@ -103,8 +103,15 @@
 <meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619005143152.png">
 <meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619005450432.png">
 <meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619005519866.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619220712817.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619224010692.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619222102753.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619223807308.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619230406503.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619230708537.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619231318989.png">
 <meta property="article:published_time" content="2020-06-17T15:01:58.000Z">
-<meta property="article:modified_time" content="2020-06-19T04:00:27.643Z">
+<meta property="article:modified_time" content="2020-06-19T15:18:16.934Z">
 <meta property="article:author" content="Will">
 <meta property="article:tag" content="CS224N">
 <meta name="twitter:card" content="summary">
@@ -364,7 +371,7 @@
                   <span class="post-meta-item-text">Words count in article&#58;</span>
                 
                 <span title="Words count in article">
-                  1.1k
+                  1.5k
                 </span>
               
 
@@ -380,7 +387,7 @@
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
                 <span title="Reading time">
-                  3
+                  5
                 </span>
               
             </div>
@@ -402,7 +409,6 @@
 
       
         <h1 id="cs224nl6_l7.-lm-rnn_lstm_gru">【CS224N】L6_L7. LM, RNN_LSTM_GRU</h1>
-<blockquote>
 <p>L6和L7从Language model出发，讲解了NLP中非常常见的RNN以及各种variants。主要包含以下内容：</p>
 <ul>
 <li>Language model</li>
@@ -413,8 +419,7 @@
 <li>Bidirectional RNN</li>
 <li>Deep RNN</li>
 </ul>
-</blockquote>
-<h2 id="n-gram-language-models">n-gram Language Models</h2>
+<h2 id="n-gram-language-models">N-gram Language Models</h2>
 <p>语言模型是NLP中的一类任务，它的目的是预测接下来的词将会是什么，即给定前n词，计算出第n+1个词的概率分布。语言模型的应用比较广泛，比如拼音输入法的智能提示，智能纠错等。</p>
 <p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200616235905326.png" alt="image-20200616235905326" style="zoom:50%;"></p>
 <p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200616235519607.png" alt="image-20200616235519607" style="zoom:50%;"></p>
@@ -439,7 +444,7 @@
 <p><strong>Unlike n-gram which only focus on nearby words, Recurrent Neural Networks (RNN) are capable of conditioning the model on all previous words in the corpus.</strong></p>
 <h3 id="rnn-model">RNN model</h3>
 <p>RNN核心思想是：用了同一个参数矩阵W (<span class="math inline">\(W_h, W_e\)</span>都不变)在各个时间上共享，共同训练，经过最后一个时间步计算加上反向传播后得到的W，会在infer过程的各层中共享。</p>
-<p><u><strong><em>值得注意的是，虽然我们看到很多图RNN横向貌似有好几层，但是实际上它只是一个RNN单元在自我循环。</em></strong></u></p>
+<p><u><strong><em>值得注意的是，在各个深度学习框架里，对RNN的实现有区别。Keras采用padding的方式，对批量句子进行按最长句子长度补全长度，Pytorch则是dynamic的方式</em></strong></u></p>
 <p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200618202714992.png" alt="image-20200618202714992" style="zoom:50%;"></p>
 <p>下面是RNN的例子。</p>
 <p><span class="math inline">\(x\)</span>是输入的词或者词的index，经过E后得到其word embedding <span class="math inline">\(e^n\)</span>，作为模型每一个时间戳<span class="math inline">\(t\)</span>的输入。其后该输入（乘上一个参数<span class="math inline">\(W_e\)</span>）、时间<span class="math inline">\(t-1\)</span>的隐藏层输出（乘上参数<span class="math inline">\(W_h\)</span>）一起，构成时间t的隐藏层输入，作用一个非线性的激活函数，如<span class="math inline">\(tanh\)</span>，即可得到时间<span class="math inline">\(t\)</span>的隐藏层输出。</p>
@@ -487,14 +492,33 @@
 <li><p>密集连接</p>
 <p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619005519866.png" alt="image-20200619005519866" style="zoom:50%;"></p></li>
 <li><p>RNN的变体</p>
-<p>Next section.</p></li>
+<p>GRU and LSTM.</p></li>
 </ol>
 <h2 id="lstm">LSTM</h2>
-<h3 id="section"></h3>
-<h2 id="reference"><u>Reference</u></h2>
+<p>选择性记住，选择性忘记，这就是LSTM。</p>
+<p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619220712817.png" alt="image-20200619220712817" style="zoom:50%;"></p>
+<p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619224010692.png" alt="image-20200619224010692" style="zoom:50%;"></p>
+<p>LSTM的结构使得RNN可以更容易的保存住很久之前的信息，因为有forget gate来选择哪些信息留下，哪些舍弃。但是LSTM<strong><u>无法根本性解决</u></strong>梯度弥散问题。</p>
+<h2 id="gru">GRU</h2>
+<p>GRU，全称为Gated Recurrent Units。GRU可以视为对LSTM的简化。LSTM可以是一个默认使用的model，但是如果想让训练更快，那么可以用GRU代替。数据集大的时候用LSTM，数据集小的时候用GRU。</p>
+<p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619222102753.png" alt="image-20200619222102753" style="zoom:50%;"></p>
+<p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619223807308.png" alt="image-20200619223807308" style="zoom:50%;"></p>
+<h2 id="bidirectional-rnn">bidirectional RNN</h2>
+<p>在情感分类任务中，后面出现的词可能会对前面出现的词的情绪造成影响。例如：the movie was terribly exciting. terribly可能会是一个消极的信号，但是结合后面的exciting，就是积极的。</p>
+<p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619230406503.png" alt="image-20200619230406503" style="zoom:50%;"></p>
+<p>此时可以使用bidirectional RNN来解决。bidirectional RNN中，正向和反向的hidden state会被concatenate在一起。</p>
+<p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619230708537.png" alt="image-20200619230708537" style="zoom:50%;"></p>
+<p>bidirectional RNN只有在句子整体都可以被访问到的情况下才适用，不适合生成模型。bidirectional RNN是十分强大的，如果可以获取整个的输入句子，那么应该默认使用bidirectional RNN。BERT就是bidirectional的architecture。</p>
+<h2 id="multi-layer-rnns">Multi-layer RNNs</h2>
+<p>deep RNN可以处理更为复杂的输入，其中lower RNNs 计算 lower-level features，higher RNNs 计算 higher-level features。下面是deep RNN的示意图。</p>
+<p><img src="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/image-20200619231318989.png" alt="image-20200619231318989" style="zoom:50%;"></p>
+<p>高性能的RNN一般都是deep的，但是又不像DNN/CNN那样deep。</p>
+<p>例如，对于NMT来说，encoder RNN用2-4层，decoder RNN用4层。</p>
+<h2 id="reference">Reference</h2>
 <ul>
 <li><a href="https://zhuanlan.zhihu.com/p/33006526" target="_blank" rel="noopener">详解深度学习中的梯度消失、爆炸原因及其解决方法</a></li>
 </ul>
+<p><strong><em><u>后记：这两节课的学习和总结用了一周的时间，节奏还是比较慢的。</u></em></strong></p>
 
       
     </div>
@@ -669,7 +693,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs224nl6_l7.-lm-rnn_lstm_gru"><span class="nav-number">1.</span> <span class="nav-text">【CS224N】L6_L7. LM, RNN_LSTM_GRU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#n-gram-language-models"><span class="nav-number">1.1.</span> <span class="nav-text">n-gram Language Models</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rnn"><span class="nav-number">1.2.</span> <span class="nav-text">RNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rnn-model"><span class="nav-number">1.2.1.</span> <span class="nav-text">RNN model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">1.2.2.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evaluation-on-lm"><span class="nav-number">1.2.3.</span> <span class="nav-text">Evaluation on LM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向传播梯度弥散梯度爆炸"><span class="nav-number">1.2.4.</span> <span class="nav-text">反向传播，梯度弥散，梯度爆炸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#梯度爆炸的解决方式梯度裁剪"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">梯度爆炸的解决方式：梯度裁剪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#梯度弥散的解决方式"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">梯度弥散的解决方式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lstm"><span class="nav-number">1.3.</span> <span class="nav-text">LSTM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#section"><span class="nav-number">1.3.1.</span> <span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">1.4.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs224nl6_l7.-lm-rnn_lstm_gru"><span class="nav-number">1.</span> <span class="nav-text">【CS224N】L6_L7. LM, RNN_LSTM_GRU</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#n-gram-language-models"><span class="nav-number">1.1.</span> <span class="nav-text">N-gram Language Models</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rnn"><span class="nav-number">1.2.</span> <span class="nav-text">RNN</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#rnn-model"><span class="nav-number">1.2.1.</span> <span class="nav-text">RNN model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#损失函数"><span class="nav-number">1.2.2.</span> <span class="nav-text">损失函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#evaluation-on-lm"><span class="nav-number">1.2.3.</span> <span class="nav-text">Evaluation on LM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向传播梯度弥散梯度爆炸"><span class="nav-number">1.2.4.</span> <span class="nav-text">反向传播，梯度弥散，梯度爆炸</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#梯度爆炸的解决方式梯度裁剪"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">梯度爆炸的解决方式：梯度裁剪</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#梯度弥散的解决方式"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">梯度弥散的解决方式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lstm"><span class="nav-number">1.3.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gru"><span class="nav-number">1.4.</span> <span class="nav-text">GRU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bidirectional-rnn"><span class="nav-number">1.5.</span> <span class="nav-text">bidirectional RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multi-layer-rnns"><span class="nav-number">1.6.</span> <span class="nav-text">Multi-layer RNNs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">1.7.</span> <span class="nav-text">Reference</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -705,7 +729,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">9k</span>
+    <span title="Site words total count">9.4k</span>
   
 </div>
 
