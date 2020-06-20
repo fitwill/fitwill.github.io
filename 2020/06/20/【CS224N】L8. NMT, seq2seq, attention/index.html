@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CS224N," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="【CS224N】L8. NMT, seq2seq, attention 这节课将会：  介绍一个新任务：Machine Translation 介绍一个新神经网络架构：sequence to sequence 介绍一个新的神经网络技术：Attention  Statistical Machine Translation 大都是Rule-based，即有一个对照表dictionary。这里我们只简单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【CS224N】L8. NMT, seq2seq, attention">
+<meta property="og:url" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/index.html">
+<meta property="og:site_name" content="GO WITH Will">
+<meta property="og:description" content="【CS224N】L8. NMT, seq2seq, attention 这节课将会：  介绍一个新任务：Machine Translation 介绍一个新神经网络架构：sequence to sequence 介绍一个新的神经网络技术：Attention  Statistical Machine Translation 大都是Rule-based，即有一个对照表dictionary。这里我们只简单">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620151945250.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620152018340.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620153218480.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620153918406.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620154903428.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621002943340.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621003718158.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621004505085.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010214561.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010344131.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010620916.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010949683.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621020606588.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621021230667.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621021541512.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621021620299.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022037839.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022227921.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022647674.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022737933.png">
+<meta property="og:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621023050746.png">
+<meta property="article:published_time" content="2020-06-20T01:01:58.000Z">
+<meta property="article:modified_time" content="2020-06-20T18:55:17.239Z">
+<meta property="article:author" content="Will">
+<meta property="article:tag" content="CS224N">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620151945250.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://willzhang.tech/2020/06/20/【CS224N】L8. NMT, seq2seq, attention/"/>
+
+
+
+
+
+  <title>【CS224N】L8. NMT, seq2seq, attention | GO WITH Will</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GO WITH Will</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Will">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GO WITH Will">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【CS224N】L8. NMT, seq2seq, attention</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-06-20T09:01:58+08:00">
+                2020-06-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index">
+                    <span itemprop="name">NLP</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  5
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="cs224nl8.-nmt-seq2seq-attention">【CS224N】L8. NMT, seq2seq, attention</h1>
+<p>这节课将会：</p>
+<ul>
+<li>介绍一个新任务：Machine Translation</li>
+<li>介绍一个新神经网络架构：sequence to sequence</li>
+<li>介绍一个新的神经网络技术：Attention</li>
+</ul>
+<h2 id="statistical-machine-translation">Statistical Machine Translation</h2>
+<p>大都是Rule-based，即有一个对照表dictionary。这里我们只简单介绍，不是重点。 <img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620151945250.png" alt="image-20200620151945250" style="zoom:50%;"></p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620152018340.png" alt="image-20200620152018340" style="zoom:50%;"></p>
+<p>这里a是一个对照的基准，用于映射英语与法语之间词、短语级别的对应关系，又可以分为1对1，多对1，1对多，多对多，十分复杂！</p>
+<h2 id="neural-machine-translation">Neural Machine Translation</h2>
+<h3 id="basic-ideas-of-nmt-and-seq2seq">Basic Ideas of NMT and seq2seq</h3>
+<p>NMT的概念最早提出时，同时也带来了seq2seq model。</p>
+<p>下面是seq2seq在做预测时候的示意图。encoder对输入的句子进行编码，编码的结果作为decoder hidden states的初始值，decoder每个t时刻预测出来的结果，当做t+1时刻的inputs，t时刻的hidden state会传递给t+1时刻的hidden layer。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620153218480.png" alt="image-20200620153218480" style="zoom:50%;"></p>
+<p>NMT可以被视为一个条件语言模型。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620153918406.png" alt="image-20200620153918406" style="zoom:50%;"></p>
+<h3 id="training-nmt">Training NMT</h3>
+<p>seq2seq的训练过程与预测过程有所不同。训练过程的decoder每一步的输入是groud truth在该timestamp的真实输入，而预测过程是用t-1的预测词来预测t的词。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200620154903428.png" alt="image-20200620154903428" style="zoom:50%;"></p>
+<h3 id="decoding-methods">Decoding Methods</h3>
+<h4 id="greedy-decoding">Greedy decoding</h4>
+<p>到目前，我们在解码的时候采用的思路都是：在每一个时间戳做预测的时候都预测当前最优解，但是这样最终结果不一定是全局最优的。这种方法叫做贪心解码，即greedy decoding。</p>
+<h4 id="exhaustive-search-decoding">Exhaustive search decoding</h4>
+<p>Exhaustive search decoding意为在每一个timestamp都遍历所有可能的结果，即<span class="math inline">\(|V|\)</span>，这样一定可以选择出全局最优解。但是这样的时间复杂度很高，为<span class="math inline">\(O(|V|^T)\)</span>。</p>
+<h4 id="beam-search-decoding">Beam Search Decoding</h4>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621002943340.png" alt="image-20200621002943340" style="zoom:50%;"></p>
+<p>核心思想：在解码的每一个时间戳的每个分支上，都生成K个candidates，对比当前的所有path，选择K个score最高的，继续解码。下面是Beam search的process。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621003718158.png" alt="image-20200621003718158" style="zoom: 90%;"></p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621004505085.png" alt="image-20200621004505085" style="zoom: 90%;"></p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010214561.png" alt="image-20200621010214561" style="zoom:50%;"></p>
+<p>Beam search什么时候搜索结束呢？</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010344131.png" alt="image-20200621010344131" style="zoom:50%;"></p>
+<p>既然可能会出现提前停止的分支，我们知道短的分支直觉上是会比长的分支score高的，因为长度+1，score会加上一个负数。面对这种情况，我们可以对其正则化。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010620916.png" alt="image-20200621010620916" style="zoom:35%;"></p>
+<h4 id="bleu">BLEU</h4>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621010949683.png" alt="image-20200621010949683" style="zoom:50%;"></p>
+<p>BLEU的计算方式如下如所示：</p>
+<p>首先令 k 是我们要评估的分数的最大 n-gram。即如果 k=4，BELU分数仅计算大小 == 4 的 n-grams ，并忽略大于4的 n-grams 。</p>
+<p>对长度是 n 的 grams 的精确度分数：<span class="math inline">\(p_n = count(matched\ n-grams)\ /\ count(n-grams\ in\ candidate\ translation)\)</span>。</p>
+<p>最后，令 <span class="math inline">\(w_{n}=1 / 2^{n}\)</span> 是第 n 个 gram 的几何加权。我们简单惩罚的定义为：<span class="math inline">\(\beta=e^{\min \left(0,1-\frac{len_{ref}}{len_{MT}}\right)}\)</span>。其中 <span class="math inline">\(len_{ref}\)</span> 是参考翻译的句子长度， <span class="math inline">\(len_{MT}\)</span> 是机器翻译的句子长度。</p>
+<p>至此，BELU 分数定义为：<span class="math display">\[ BELU=\beta \prod_{i=1}^{k} p_{n}^{w_{n}} \]</span>.</p>
+<p>关于BLEU，再贴上知乎er的理解。</p>
+<blockquote>
+<p><strong>BLEU 的大意是比较候选译文和参考译文里的 n-gram（实践中从 unigram 取到 4-gram） 重合程度，重合程度越高就认为译文质量越高。选不同长度的 n-gram 是因为，unigram 的准确率可以用于衡量单词翻译的准确性，更高阶的 n-gram 的准确率可以用来衡量句子的流畅性。</strong></p>
+<p>这是一个<strong>只看中准确率</strong>的指标，就是说更加关心候选译文里的多少 n-gram 是对的（即在参考译文里出现了），而不在乎召回率（参考译文里有哪些 n-gram 在候选译文中没出现）。不过这不算特别严重的问题，因为 BLEU 原论文<strong>建议大家的测试集里给每个句子配备 4 条参考译文</strong>，这样就可以减小语言多样性带来的影响（然而现在很多机器翻译的测试集都是只有 1 条译文，尴尬= =）；另外还有 brevity penalty 来惩罚候选译文过短的情况（候选译文过短在机器翻译中往往意味着漏翻，也就是低召回率）。</p>
+<p>作者：Towser 链接：https://www.zhihu.com/question/304798594/answer/567383628 来源：知乎 著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+</blockquote>
+<h2 id="attention">Attention</h2>
+<h3 id="basic-ideas">Basic Ideas</h3>
+<p>我们知道，在RNNs encoder里，所有timestamp的信息都堆积在最后一个unit里，这样很容易引起信息存储的瓶颈，严重影响model的效果，为此我们之前讨论了多种解决方案，包括LSTM/GRU/residual net等。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621020606588.png" alt="image-20200621020606588" style="zoom:50%;"></p>
+<p>Attention机制也可以很好地解决这个问题。</p>
+<p>Attention的核心思想：在decoder阶段的每个timestamp都用一个直接与encoder的连接，通过计算“重要性”，来关注一些特定的source sequence。</p>
+<p>下面是seq2seq with attention的示意图。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621021230667.png" alt="image-20200621021230667" style="zoom:50%;"></p>
+<p><start>的hidden state与encoder每个词的hidden state计算attention score，这里的计算方式常见为dot product。经过softmax归一化，可以得到<start>与每个输入token的注意力分布。</start></start></p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621021541512.png" alt="image-20200621021541512" style="zoom:50%;"></p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621021620299.png" alt="image-20200621021620299" style="zoom:50%;"></p>
+<p>接下来在进行第二个词的预测，与RNN一样，是把t-1时刻的输出当做t时刻的输入，以此类推，直至<END>。</END></p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022037839.png" alt="image-20200621022037839" style="zoom:50%;"></p>
+<p>接下来是上面过程中涉及到的数学表达式。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022227921.png" alt="image-20200621022227921" style="zoom:50%;"></p>
+<h3 id="advantages-of-attention">Advantages of Attention</h3>
+<ol type="1">
+<li>解决了rnn的bottleneck problem；</li>
+<li>解决了梯度消失；</li>
+<li>更具有可解释性：通过可视化attention distribution，可以看到decoder的每个词与encoder每个词的相互关系。</li>
+</ol>
+<h3 id="general-attention">General Attention</h3>
+<p>Attention可以被用在很多任务，很多架构中。</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022647674.png" alt="image-20200621022647674" style="zoom:50%;"></p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621022737933.png" alt="image-20200621022737933" style="zoom:50%;"></p>
+<h3 id="several-attention-variants">Several Attention Variants</h3>
+<p>Attention的变体方式通常是以下几种：</p>
+<ol type="1">
+<li><p>针对计算attention score的方式；</p>
+<p><img src="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/image-20200621023050746.png" alt="image-20200621023050746" style="zoom:50%;"></p></li>
+<li><p>针对获得attention distribution的方式；</p></li>
+<li><p>针对通过weighted sum获取attention output的方式。</p></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CS224N/" rel="tag"># CS224N</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/17/%E3%80%90CS224N%E3%80%91L6_L7.%20LM,%20RNN_LSTM_GRU/" rel="next" title="【CS224N】L6/L7. LM, RNN/LSTM/GRU">
+                <i class="fa fa-chevron-left"></i> 【CS224N】L6/L7. LM, RNN/LSTM/GRU
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Will" />
+            
+              <p class="site-author-name" itemprop="name">Will</p>
+              <p class="site-description motion-element" itemprop="description">LIVE FAST DIE YOUNG  BE WILD HAVE FUN</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#cs224nl8.-nmt-seq2seq-attention"><span class="nav-number">1.</span> <span class="nav-text">【CS224N】L8. NMT, seq2seq, attention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#statistical-machine-translation"><span class="nav-number">1.1.</span> <span class="nav-text">Statistical Machine Translation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#neural-machine-translation"><span class="nav-number">1.2.</span> <span class="nav-text">Neural Machine Translation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#basic-ideas-of-nmt-and-seq2seq"><span class="nav-number">1.2.1.</span> <span class="nav-text">Basic Ideas of NMT and seq2seq</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#training-nmt"><span class="nav-number">1.2.2.</span> <span class="nav-text">Training NMT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#decoding-methods"><span class="nav-number">1.2.3.</span> <span class="nav-text">Decoding Methods</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#greedy-decoding"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">Greedy decoding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exhaustive-search-decoding"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">Exhaustive search decoding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#beam-search-decoding"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">Beam Search Decoding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bleu"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">BLEU</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#attention"><span class="nav-number">1.3.</span> <span class="nav-text">Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#basic-ideas"><span class="nav-number">1.3.1.</span> <span class="nav-text">Basic Ideas</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#advantages-of-attention"><span class="nav-number">1.3.2.</span> <span class="nav-text">Advantages of Attention</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#general-attention"><span class="nav-number">1.3.3.</span> <span class="nav-text">General Attention</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#several-attention-variants"><span class="nav-number">1.3.4.</span> <span class="nav-text">Several Attention Variants</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Will</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">10.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+<div class="powered-by">
+	<i class="fa fa-user-md"></i>
+	<span id="busuanzi_container_site_uv">
+		本站访客数:<span id="busuanzi_value_site_uv"></span>
+	</span>
+	<span class="post-meta-divider">|</span>
+	<span id="busuanzi_container_site_pv">
+		本站访问量<span id="busuanzi_value_site_pv"></span>
+	</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
