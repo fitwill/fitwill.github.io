@@ -103,8 +103,9 @@
 <meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200721174834509.png">
 <meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/XGBoost-Detail-Analysis5.png">
 <meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200722082120815.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200722231753787.png">
 <meta property="article:published_time" content="2020-07-12T08:28:58.000Z">
-<meta property="article:modified_time" content="2020-07-22T02:26:56.037Z">
+<meta property="article:modified_time" content="2020-07-22T15:42:08.993Z">
 <meta property="article:author" content="Will">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715185603736.png">
@@ -363,7 +364,7 @@
                   <span class="post-meta-item-text">Words count in article&#58;</span>
                 
                 <span title="Words count in article">
-                  2k
+                  2.5k
                 </span>
               
 
@@ -379,7 +380,7 @@
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
                 <span title="Reading time">
-                  7
+                  9
                 </span>
               
             </div>
@@ -501,15 +502,17 @@
 <p>为了不让空桶出现，全局模式会构造更多的候选拆分点。而局部模式会更适合构建更深的树。</p>
 <h3 id="加权分桶">加权分桶</h3>
 <p>实际上 XGBoost 不是简单按照样本值进行分位， 而是以二阶导数值作为权重的样本值来分。</p>
-<p>假设每个sample的第k维特征，及候选样本的损失函数的二阶偏导数为：<span class="math inline">\(D_k={(x_{1k},h_1),(x_{2k},h_2)⋯(x_{nk},h_n)}\)</span>。定义rank function，</p>
+<p>假设每个sample的第k维特征，及候选样本的损失函数的二阶偏导数为：<span class="math inline">\(D_k={(x_{1k},h_1),(x_{2k},h_2)⋯(x_{nk},h_n)}\)</span>。</p>
+<p>定义rank function，</p>
 <p><span class="math display">\[ r_k(z) = \frac{\sum_{(x, h)\in D_k,\ x&lt;z}{h}}{\sum_{(x, h)\in D_k}{h}} \]</span></p>
-<p>，rank函数可以反应所有第k维特征取值小于z的样本的二阶梯度之和占所有的比例。</p>
+<p>rank函数可以反应所有第k维特征取值小于z的样本的二阶梯度之和占所有的比例。</p>
 <p>我们的目标是找到一个候选的分割节点集 $ {(x_{1k},h_1),(x_{2k},h_2)⋯(x_{nk},h_n)} $，这个集合满足</p>
 <p><span class="math display">\[|r_k(s_k, j) - r_k(s_k, j+1)| &lt; \delta,\ s_{k1} = \mathop{min} \limits_i \ x_{ik},\ s_{kl} = \mathop{max}\limits_i\ x_{ik}\]</span>，</p>
 <p>其中<span class="math inline">\(x_{i, k}\)</span>表示样本i的第k个特征。即：</p>
 <ul>
 <li>最小的拆分点是所有样本第k维的最小值。</li>
 <li>最大的拆分点是所有样本第k维的最大值。</li>
+<li></li>
 <li>中间的拆分点：选取拆分点，使得相邻拆分点的rank函数值小于 <span class="math inline">\(\delta\)</span>。
 <ul>
 <li>其意义为：第 k维大于等于<span class="math inline">\(s_{k, j}\)</span>，小于<span class="math inline">\(s_{k, j+1}\)</span> 的样本的h之和，占总的 h之和的比例小于<span class="math inline">\(\delta\)</span> 。</li>
@@ -520,6 +523,19 @@
 <p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200722082120815.png" alt="image-20200722082120815" style="zoom:35%;"></p>
 <p>这可以被看成是关于树函数的是权重为<span class="math inline">\(h_i\)</span> 的加权平方损失函数。</p>
 <h3 id="sparsity-aware-split-finding">Sparsity-aware Split Finding</h3>
+<p>在实际问题中，稀疏数据是十分常见的，造成数据稀疏的原因一般可以归咎为数据缺失，某个特征出现较多的0值，one hot编码引入的大量0。为了应对缺失值问题，作者提出了一种处理方式：为每个树节点增加一个默认的方向，当x中的相应特征值缺失时，x就被分到这个default方向上。即对于稀疏特征，只需要对有效值进行处理，无效值则采用默认的分裂方向（要么是左，要么是右）。</p>
+<p>此外，鉴于0值的特殊性，在XGBoost 算法的实现中，允许对数值0进行不同的处理。可以将数值0视作缺失值，也可以将其视作有效值。</p>
+<p>那么如何指定这个默认的方向呢？答案是由模型学习出来。算法如下：</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200722231753787.png" alt="image-20200722231753787" style="zoom:50%;"></p>
+<p>可以总结为：首先让所有缺失值都在右子树上，计算出gain，然后让所有缺失值都在左子树上，计算出gain，选取出最大对的gain，即对应着最优的样本划分。</p>
+<h2 id="系统设计">系统设计</h2>
+<h3 id="column-block">Column Block</h3>
+<p>算法中最耗时的部分就是预排序，为了节省排序的时间，XGBoost将数据存在内存单元block中，同时在block采用CSC 格式存放(Compressed Column format)，每一列（即每个属性的取值）均升序存放，这样，一次读入数据并排好序后，以后均可使用。在精确贪心算法中，将所有数据均导入内存，算法只要在数据中线性扫描已经预排序过的特征就可以。对于近似算法，可以用多个block(Multiple blocks)分别存储不同的子样本集，多个block可以并行计算。</p>
+<p>重要的是，由于将数据按列存储，可以同时访问所有列，那么可以对所有属性同时执行split finding算法，从而并行化split finding.</p>
+<h3 id="cache-aware-access">Cache-aware Access</h3>
+<p>略</p>
+<h3 id="out-of-core">Out of Core</h3>
+<p>略</p>
 
       
     </div>
@@ -692,7 +708,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#review-ensemble-learning"><span class="nav-number">1.</span> <span class="nav-text">Review Ensemble Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tree-boosting-in-a-nutshell"><span class="nav-number">2.</span> <span class="nav-text">Tree Boosting in a Nutshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#regularized-learning-objective-and-gradient-tree-boosting"><span class="nav-number">2.1.</span> <span class="nav-text">Regularized Learning Objective and Gradient Tree Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#目标函数"><span class="nav-number">2.1.1.</span> <span class="nav-text">目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#近似目标函数"><span class="nav-number">2.1.2.</span> <span class="nav-text">近似目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定义树的表达"><span class="nav-number">2.1.3.</span> <span class="nav-text">定义树的表达</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#新的目标函数"><span class="nav-number">2.1.4.</span> <span class="nav-text">新的目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#确定最佳的树的形状"><span class="nav-number">2.1.5.</span> <span class="nav-text">确定最佳的树的形状</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shrinkage-and-column-subsampling"><span class="nav-number">2.2.</span> <span class="nav-text">Shrinkage and Column Subsampling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shrinkage"><span class="nav-number">2.2.1.</span> <span class="nav-text">Shrinkage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#column-subsampling"><span class="nav-number">2.2.2.</span> <span class="nav-text">Column Subsampling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#split-finding-algorithm"><span class="nav-number">3.</span> <span class="nav-text">Split Finding Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#精确贪心搜索"><span class="nav-number">3.1.</span> <span class="nav-text">精确贪心搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#近似算法"><span class="nav-number">3.2.</span> <span class="nav-text">近似算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加权分桶"><span class="nav-number">3.3.</span> <span class="nav-text">加权分桶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sparsity-aware-split-finding"><span class="nav-number">3.4.</span> <span class="nav-text">Sparsity-aware Split Finding</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#review-ensemble-learning"><span class="nav-number">1.</span> <span class="nav-text">Review Ensemble Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tree-boosting-in-a-nutshell"><span class="nav-number">2.</span> <span class="nav-text">Tree Boosting in a Nutshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#regularized-learning-objective-and-gradient-tree-boosting"><span class="nav-number">2.1.</span> <span class="nav-text">Regularized Learning Objective and Gradient Tree Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#目标函数"><span class="nav-number">2.1.1.</span> <span class="nav-text">目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#近似目标函数"><span class="nav-number">2.1.2.</span> <span class="nav-text">近似目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定义树的表达"><span class="nav-number">2.1.3.</span> <span class="nav-text">定义树的表达</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#新的目标函数"><span class="nav-number">2.1.4.</span> <span class="nav-text">新的目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#确定最佳的树的形状"><span class="nav-number">2.1.5.</span> <span class="nav-text">确定最佳的树的形状</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shrinkage-and-column-subsampling"><span class="nav-number">2.2.</span> <span class="nav-text">Shrinkage and Column Subsampling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shrinkage"><span class="nav-number">2.2.1.</span> <span class="nav-text">Shrinkage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#column-subsampling"><span class="nav-number">2.2.2.</span> <span class="nav-text">Column Subsampling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#split-finding-algorithm"><span class="nav-number">3.</span> <span class="nav-text">Split Finding Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#精确贪心搜索"><span class="nav-number">3.1.</span> <span class="nav-text">精确贪心搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#近似算法"><span class="nav-number">3.2.</span> <span class="nav-text">近似算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加权分桶"><span class="nav-number">3.3.</span> <span class="nav-text">加权分桶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sparsity-aware-split-finding"><span class="nav-number">3.4.</span> <span class="nav-text">Sparsity-aware Split Finding</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#系统设计"><span class="nav-number">4.</span> <span class="nav-text">系统设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#column-block"><span class="nav-number">4.1.</span> <span class="nav-text">Column Block</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cache-aware-access"><span class="nav-number">4.2.</span> <span class="nav-text">Cache-aware Access</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#out-of-core"><span class="nav-number">4.3.</span> <span class="nav-text">Out of Core</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -728,7 +744,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">12.6k</span>
+    <span title="Site words total count">13.1k</span>
   
 </div>
 
