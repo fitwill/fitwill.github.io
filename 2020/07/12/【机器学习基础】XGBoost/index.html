@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。 XGBoost的全称为eXtreme Gradient Boosting，论文，本篇记录即建立在论文之上。 Review Ensemble">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【机器学习基础】XGBoost">
+<meta property="og:url" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/index.html">
+<meta property="og:site_name" content="GO WITH Will">
+<meta property="og:description" content="自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。 XGBoost的全称为eXtreme Gradient Boosting，论文，本篇记录即建立在论文之上。 Review Ensemble">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715185603736.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715224143295.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715233401688.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715234519622-5384745.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716003154915.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716202712717.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716203133182.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716205746249.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716213353383.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716223618723.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716224028453.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716231239511.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200719134628131.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200721170503844.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200721174834509.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/XGBoost-Detail-Analysis5.png">
+<meta property="og:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200722082120815.png">
+<meta property="article:published_time" content="2020-07-12T08:28:58.000Z">
+<meta property="article:modified_time" content="2020-07-22T02:26:56.037Z">
+<meta property="article:author" content="Will">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715185603736.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://willzhang.tech/2020/07/12/【机器学习基础】XGBoost/"/>
+
+
+
+
+
+  <title>【机器学习基础】XGBoost | GO WITH Will</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GO WITH Will</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Will">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GO WITH Will">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【机器学习基础】XGBoost</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-07-12T16:28:58+08:00">
+                2020-07-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习基础</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>自从陈天奇于2015年提出XGBoost以来，该模型就一直在各大数据竞赛中当作大杀器被频繁祭出。速度快、效果好是XGBoost的最大优点。XGBoost与GBDT同出一脉，都属于boosting集成学习算法，但XGBoost相较于GBDT要青出于蓝而胜于蓝。</p>
+<p>XGBoost的全称为eXtreme Gradient Boosting，<a href="https://arxiv.org/pdf/1603.02754.pdf" target="_blank" rel="noopener">论文</a>，本篇记录即建立在论文之上。</p>
+<h2 id="review-ensemble-learning">Review Ensemble Learning</h2>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715185603736.png" alt="image-20200715185603736" style="zoom:50%;"></p>
+<h2 id="tree-boosting-in-a-nutshell">Tree Boosting in a Nutshell</h2>
+<p>核心思想：基于残差的训练，加性模型</p>
+<ul>
+<li><p>每个base model都是weak learner，产生残差后，由下级weak learner拟合残差。</p></li>
+<li><p>即训练第二个模型的时候，<span class="math inline">\(X\)</span>不变，<span class="math inline">\(y\)</span>变为<span class="math inline">\((y-y_1)\)</span>，以此类推。</p></li>
+<li><p>最后的预测结果为每个weak learner的预测值之和。</p></li>
+</ul>
+<h3 id="regularized-learning-objective-and-gradient-tree-boosting">Regularized Learning Objective and Gradient Tree Boosting</h3>
+<h4 id="目标函数">目标函数</h4>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715224143295.png" alt="image-20200715224143295" style="zoom:50%;"></p>
+<ul>
+<li><span class="math inline">\(f_k(x_i)\)</span> 表示模型的第 <span class="math inline">\(k\)</span> 棵树对样本 <span class="math inline">\(x_i\)</span> 的预测结果。</li>
+<li>目标函数包含了：
+<ul>
+<li>每个样本的损失之和：分类模型cross entropy loss，回归模型RMSE；</li>
+<li>每棵树的惩罚：可能是对树的深度，叶节点权重，叶节点数量等的限制。</li>
+</ul></li>
+<li>正则化项的作用是防止模型的过拟合。</li>
+</ul>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715233401688.png" alt="image-20200715233401688" style="zoom:50%;"></p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200715234519622-5384745.png" alt="image-20200715234519622" style="zoom:50%;"></p>
+<p>注：手写体最右侧的 <span class="math inline">\(Ωf(t)\)</span> 实际应为 <span class="math inline">\(Ω(f_t)\)</span></p>
+<p>至此，我们构造出了目标函数。</p>
+<h4 id="近似目标函数">近似目标函数</h4>
+<p>我们可以使用泰勒展开的二阶形式对目标函数做一个近似。为什么使用泰勒二阶展开，是因为它可以被用于更快的最优化目标函数。</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716003154915.png" alt="image-20200716003154915" style="zoom:50%;"></p>
+<p><span class="math inline">\(g_i\)</span>，<span class="math inline">\(h_i\)</span> 分别是 <span class="math inline">\(f(x)\)</span> 一阶倒数和二阶导数。</p>
+<p>这里可以这么理解：$f(x) = l(y_i, {y^{hat}_i}^{(t-1)}) $， <span class="math inline">\(f(x+△x) = l(y_i, {y^{hat}_i}^{(t-1)} + f_t(x_i))\)</span></p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716202712717.png" alt="image-20200716202712717" style="zoom:50%;"></p>
+<p>G/h都是很容易计算的，但是 <span class="math inline">\(f_t(x)\)</span> / <span class="math inline">\(Ω(f_t)\)</span>应该如何表示呢？它是一棵树，如何表示成函数的形式？</p>
+<h4 id="定义树的表达">定义树的表达</h4>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716203133182.png" alt="image-20200716203133182" style="zoom:50%;"></p>
+<p>这里 <span class="math inline">\(w\)</span>，<span class="math inline">\(q\)</span>是需要学习出来的，这就是对树的参数化。</p>
+<p>另外，我们再参数化树的复杂度函数。</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716205746249.png" alt="image-20200716205746249" style="zoom:50%;"></p>
+<h4 id="新的目标函数">新的目标函数</h4>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716213353383.png" alt="image-20200716213353383" style="zoom:50%;"></p>
+<p>从每个样本的角度到每个叶节点的角度，实质上只是对样本按照节点做了一次排列组合。</p>
+<p>至此，就转换成了对二次方的优化。</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716223618723.png" alt="image-20200716223618723" style="zoom:50%;"></p>
+<p><strong><em>Obj</em></strong> 函数可以用于衡量树结构 <strong><em>q(·)</em></strong> 的好坏。</p>
+<p>以上讨论均建立在树的形状已知的情况下的计算，那么如何确定树的形状呢？</p>
+<h4 id="确定最佳的树的形状">确定最佳的树的形状</h4>
+<p>一棵树可以有很多种形状的可能，每种形状都会对应一个可以计算出的obj。</p>
+<p>最佳的树的形状，对应的obj应该是所有形状对应的objs中最优的。</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716224028453.png" alt="image-20200716224028453" style="zoom:50%;"></p>
+<p>暴力搜索的方式显然太费时间了。</p>
+<p>回顾决策树的生长过程，以ID3为例，每次分裂都是选择可以使得信息增益最大的feature来做split，因此类比到这里，我们可以选择使得<span class="math inline">\(|obj_{old} - obj_{new}|\)</span> 值最大的feature来做split。</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200716231239511.png" alt="image-20200716231239511" style="zoom:50%;"></p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200719134628131.png" alt="image-20200719134628131" style="zoom:50%;"></p>
+<p>当Gain&gt;0时候，叶节点可以进行分裂。</p>
+<h3 id="shrinkage-and-column-subsampling">Shrinkage and Column Subsampling</h3>
+<p>除了在目标函数中加入惩罚项，作者还提出了两种防止过拟合的方式。</p>
+<h4 id="shrinkage">Shrinkage</h4>
+<p>在每一次提升树训练迭代后，在前面乘一个因子 <span class="math inline">\(η\)</span> 来收缩其权重（也就是我们说的学习率，或者叫步长）。与SGD中的学习率类似，收缩减少了每棵树的影响，并为将来的树模型留出了改进模型的空间。</p>
+<h4 id="column-subsampling">Column Subsampling</h4>
+<p>这个技术用于随机森林中。根据用户反馈，使用列采样可以比传统的行采样（同样支持）更能防止过度采样。列采样还能加速稍后描述的并行算法。</p>
+<h2 id="split-finding-algorithm">Split Finding Algorithm</h2>
+<h3 id="精确贪心搜索">精确贪心搜索</h3>
+<p>精确算法要枚举所有features的所有分裂方式，这肯定会耗费很多时间。为了提高效率，算法会根据特征的值对其进行预排序，并按排好的顺序访问数据，下面是算法描述。值得注意的是，原文中，数据的维度是m而不是n，此处猜测m代表进行column sampling之后的结果，小于或等于n。</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200721170503844.png" alt="image-20200721170503844" style="zoom:50%;"></p>
+<p>算法的思想可以总结为：</p>
+<ul>
+<li>预排序：对于某叶节点下的sample集合，依据特征k，对samples进行排序，得到m个排序后的集合（共m个特征）；</li>
+<li>分割节点：遍历第k个集合，依次把每个第j个样本都做为splitting point，计算该split下的Score；</li>
+<li>按照最高的score对该叶节点进行split。</li>
+</ul>
+<h3 id="近似算法">近似算法</h3>
+<p>精确算法很精确，但是当数据量十分庞大的时候，数据无法一次性加载进内存，则搜索算法就无法执行，而且他也很耗时。于是作者提出了近似的搜索算法，该算法会：</p>
+<ul>
+<li><p>首先，根据特征的百分位点来预设一些candidate splitting points；</p></li>
+<li>接下来，将连续的特征值（相邻的）映射到由这些candidates分出的桶中;</li>
+<li><p>累加每个桶的G/H，以加和后的GH计算score，找出其中找到最优的桶；</p></li>
+</ul>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200721174834509.png" alt="image-20200721174834509" style="zoom:50%;"></p>
+<p>这种分桶的方式，由于每个桶内的独立计算，允许了其并行进行，只需最后对每个并行节点的值作比较即可。</p>
+<blockquote>
+<p><u>举🌰说明</u></p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/XGBoost-Detail-Analysis5.png" alt="XGBoostDetailAnalysis5" style="zoom:120%;"></p>
+<p><span class="math display">\[ Gain = max\{ Gain, \frac{G_1^2}{H_1 + \lambda} + \frac{G_{23}^2}{H_{23} + \lambda} - \frac{G_{123}^2}{H_{123} + \lambda} - \gamma,\; \frac{G_{12}^2}{H_{12} + \lambda} + \frac{G_3^2}{H_3 + \lambda} - \frac{G_{123}^2}{H_{123} + \lambda} - \gamma\} \]</span></p>
+</blockquote>
+<p>分桶有两种模式：</p>
+<ul>
+<li>全局模式：在算法开始时，对每个维度分桶一次，后续的分裂都依赖于该分桶并不再更新。
+<ul>
+<li>优点是：只需要计算一次，不需要重复计算。</li>
+<li>缺点是：在经过多次分裂之后，叶结点的样本有可能在很多全局桶中是空的。</li>
+</ul></li>
+<li>局部模式：除了在算法开始时进行分桶，每次拆分之后再重新分桶。
+<ul>
+<li>优点是：每次分桶都能保证各桶中的样本数量都是均匀的。</li>
+<li>缺点是：计算量较大。</li>
+</ul></li>
+</ul>
+<p>为了不让空桶出现，全局模式会构造更多的候选拆分点。而局部模式会更适合构建更深的树。</p>
+<h3 id="加权分桶">加权分桶</h3>
+<p>实际上 XGBoost 不是简单按照样本值进行分位， 而是以二阶导数值作为权重的样本值来分。</p>
+<p>假设每个sample的第k维特征，及候选样本的损失函数的二阶偏导数为：<span class="math inline">\(D_k={(x_{1k},h_1),(x_{2k},h_2)⋯(x_{nk},h_n)}\)</span>。定义rank function，</p>
+<p><span class="math display">\[ r_k(z) = \frac{\sum_{(x, h)\in D_k,\ x&lt;z}{h}}{\sum_{(x, h)\in D_k}{h}} \]</span></p>
+<p>，rank函数可以反应所有第k维特征取值小于z的样本的二阶梯度之和占所有的比例。</p>
+<p>我们的目标是找到一个候选的分割节点集 $ {(x_{1k},h_1),(x_{2k},h_2)⋯(x_{nk},h_n)} $，这个集合满足</p>
+<p><span class="math display">\[|r_k(s_k, j) - r_k(s_k, j+1)| &lt; \delta,\ s_{k1} = \mathop{min} \limits_i \ x_{ik},\ s_{kl} = \mathop{max}\limits_i\ x_{ik}\]</span>，</p>
+<p>其中<span class="math inline">\(x_{i, k}\)</span>表示样本i的第k个特征。即：</p>
+<ul>
+<li>最小的拆分点是所有样本第k维的最小值。</li>
+<li>最大的拆分点是所有样本第k维的最大值。</li>
+<li>中间的拆分点：选取拆分点，使得相邻拆分点的rank函数值小于 <span class="math inline">\(\delta\)</span>。
+<ul>
+<li>其意义为：第 k维大于等于<span class="math inline">\(s_{k, j}\)</span>，小于<span class="math inline">\(s_{k, j+1}\)</span> 的样本的h之和，占总的 h之和的比例小于<span class="math inline">\(\delta\)</span> 。</li>
+<li>这种拆分点使得每个桶内的以h为权重的样本数量比较均匀，而不是样本个数比较均匀。</li>
+</ul></li>
+</ul>
+<p>使用h来赋予样本的权重，是因为损失函数可以改写为</p>
+<p><img src="/2020/07/12/%E3%80%90%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E5%9F%BA%E7%A1%80%E3%80%91XGBoost/image-20200722082120815.png" alt="image-20200722082120815" style="zoom:35%;"></p>
+<p>这可以被看成是关于树函数的是权重为<span class="math inline">\(h_i\)</span> 的加权平方损失函数。</p>
+<h3 id="sparsity-aware-split-finding">Sparsity-aware Split Finding</h3>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/06/20/%E3%80%90CS224N%E3%80%91L8.%20NMT,%20seq2seq,%20attention/" rel="next" title="【CS224N】L8. NMT, seq2seq, attention">
+                <i class="fa fa-chevron-left"></i> 【CS224N】L8. NMT, seq2seq, attention
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/07/16/%E9%9D%A2%E8%AF%95%E9%A2%98%E6%95%B4%E7%90%86/" rel="prev" title="面试题整理">
+                面试题整理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Will" />
+            
+              <p class="site-author-name" itemprop="name">Will</p>
+              <p class="site-description motion-element" itemprop="description">LIVE FAST DIE YOUNG  BE WILD HAVE FUN</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#review-ensemble-learning"><span class="nav-number">1.</span> <span class="nav-text">Review Ensemble Learning</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tree-boosting-in-a-nutshell"><span class="nav-number">2.</span> <span class="nav-text">Tree Boosting in a Nutshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#regularized-learning-objective-and-gradient-tree-boosting"><span class="nav-number">2.1.</span> <span class="nav-text">Regularized Learning Objective and Gradient Tree Boosting</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#目标函数"><span class="nav-number">2.1.1.</span> <span class="nav-text">目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#近似目标函数"><span class="nav-number">2.1.2.</span> <span class="nav-text">近似目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#定义树的表达"><span class="nav-number">2.1.3.</span> <span class="nav-text">定义树的表达</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#新的目标函数"><span class="nav-number">2.1.4.</span> <span class="nav-text">新的目标函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#确定最佳的树的形状"><span class="nav-number">2.1.5.</span> <span class="nav-text">确定最佳的树的形状</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shrinkage-and-column-subsampling"><span class="nav-number">2.2.</span> <span class="nav-text">Shrinkage and Column Subsampling</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#shrinkage"><span class="nav-number">2.2.1.</span> <span class="nav-text">Shrinkage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#column-subsampling"><span class="nav-number">2.2.2.</span> <span class="nav-text">Column Subsampling</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#split-finding-algorithm"><span class="nav-number">3.</span> <span class="nav-text">Split Finding Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#精确贪心搜索"><span class="nav-number">3.1.</span> <span class="nav-text">精确贪心搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#近似算法"><span class="nav-number">3.2.</span> <span class="nav-text">近似算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#加权分桶"><span class="nav-number">3.3.</span> <span class="nav-text">加权分桶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sparsity-aware-split-finding"><span class="nav-number">3.4.</span> <span class="nav-text">Sparsity-aware Split Finding</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Will</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">12.6k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+<div class="powered-by">
+	<i class="fa fa-user-md"></i>
+	<span id="busuanzi_container_site_uv">
+		本站访客数:<span id="busuanzi_value_site_uv"></span>
+	</span>
+	<span class="post-meta-divider">|</span>
+	<span id="busuanzi_container_site_pv">
+		本站访问量<span id="busuanzi_value_site_pv"></span>
+	</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
