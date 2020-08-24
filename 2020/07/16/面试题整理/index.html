@@ -79,15 +79,15 @@
 
 
 
-<meta name="description" content="机器学习基础 XGBoost如何实现并行？（） XGBoost如何处理空值？（京东一面） softmax函数的作用是？形式是？为什么是这个形式？（京东二面） NLP 为什么Transformer比seq2seq要好？（京东二面） self-attention为什么效果好？（京东二面）">
+<meta name="description" content="ML XGBoost如何实现并行？（腾讯实习面） 介绍XGBoost（快手、京东一面） XGBoost如何处理空值？（京东一面） softmax函数的作用是？形式是？为什么是这个形式？（京东二面） 了解logistic regression吗，介绍一下。求导之后的形式是什么？（百度一面）  [ ] 谈一下L1&#x2F;L2 norm（腾讯实习面）  L1&#x2F;L2 norm都是缓解模型过拟合的手段。其中： L">
 <meta property="og:type" content="article">
 <meta property="og:title" content="面试题整理">
 <meta property="og:url" content="http://willzhang.tech/2020/07/16/%E9%9D%A2%E8%AF%95%E9%A2%98%E6%95%B4%E7%90%86/index.html">
 <meta property="og:site_name" content="GO WITH Will">
-<meta property="og:description" content="机器学习基础 XGBoost如何实现并行？（） XGBoost如何处理空值？（京东一面） softmax函数的作用是？形式是？为什么是这个形式？（京东二面） NLP 为什么Transformer比seq2seq要好？（京东二面） self-attention为什么效果好？（京东二面）">
+<meta property="og:description" content="ML XGBoost如何实现并行？（腾讯实习面） 介绍XGBoost（快手、京东一面） XGBoost如何处理空值？（京东一面） softmax函数的作用是？形式是？为什么是这个形式？（京东二面） 了解logistic regression吗，介绍一下。求导之后的形式是什么？（百度一面）  [ ] 谈一下L1&#x2F;L2 norm（腾讯实习面）  L1&#x2F;L2 norm都是缓解模型过拟合的手段。其中： L">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-16T12:13:23.288Z">
-<meta property="article:modified_time" content="2020-07-16T14:18:20.071Z">
+<meta property="article:modified_time" content="2020-08-24T04:34:13.397Z">
 <meta property="article:author" content="Will">
 <meta name="twitter:card" content="summary">
 
@@ -323,7 +323,7 @@
                   <span class="post-meta-item-text">Words count in article&#58;</span>
                 
                 <span title="Words count in article">
-                  70
+                  639
                 </span>
               
 
@@ -339,7 +339,7 @@
                   <span class="post-meta-item-text">Reading time &asymp;</span>
                 
                 <span title="Reading time">
-                  1
+                  2
                 </span>
               
             </div>
@@ -360,13 +360,40 @@
       
 
       
-        <h3 id="机器学习基础">机器学习基础</h3>
-<p>XGBoost如何实现并行？（）</p>
+        <h2 id="ml">ML</h2>
+<p>XGBoost如何实现并行？（腾讯实习面）</p>
+<p>介绍XGBoost（快手、京东一面）</p>
 <p>XGBoost如何处理空值？（京东一面）</p>
 <p>softmax函数的作用是？形式是？为什么是这个形式？（京东二面）</p>
-<h3 id="nlp">NLP</h3>
+<p>了解logistic regression吗，介绍一下。求导之后的形式是什么？（百度一面）</p>
+<ul>
+<li>[ ] <strong>谈一下L1/L2 norm（腾讯实习面）</strong></li>
+</ul>
+<p>L1/L2 norm都是缓解模型过拟合的手段。其中：</p>
+<p>L1 norm又称LASSO，是在模型损失函数后加上了</p>
+<ul>
+<li>[x] <strong>什么是ROC/AUC，如何评估分类任务（百度一面）</strong></li>
+</ul>
+<p><strong>ROC</strong>曲线的横轴是假阳性率（真实标签为negative的预测为positive的概率），纵轴是真阳性率（真实标签为positive的预测为positive的概率），当y=x时，表示无论真实标签是pos还是neg，模型预测一个样本为positive的概率都相同。可以通俗理解为，模型这时完全是在乱猜，与抛硬币本质相同，因此我们一般认为AUC的最低值为0.5。</p>
+<p>而我们希望的是真实标签为1的都能预测为1，真实标签为0的都不要预测为1，因此，如果不同模型的ROC曲线没有交叉，ROC曲线越接近左上角的模型越好。如果有交叉，可以通过AUC来评估。</p>
+<p><strong>AUC</strong>指的是ROC曲线下的面积，物理含义为正例排在负例前面的概率。AUC同时考虑了分类器对正例和负例的分类能力，在样本不均衡的情况下依然可以做出合理的评价，对样本是否不平衡分布并不敏感。举例：99人没有得病，1人得病，如果全部预测为没得病，则acc为99%，但是AUC为0.5，这样就规避了不平衡带来的问题。</p>
+<p>什么是交叉熵损失函数？（百度一面）</p>
+<p>XGB有什么超参？发现训练集和测试集效果不同如何调参？（百度一面）</p>
+<p>怎么判断是过拟合还是欠拟合？（百度一面）</p>
+<p>如何解决过拟合？（百度二面）</p>
+<h2 id="nlp">NLP</h2>
+<p>介绍一下transformer</p>
 <p>为什么Transformer比seq2seq要好？（京东二面）</p>
 <p>self-attention为什么效果好？（京东二面）</p>
+<p>self-attention的表达式为什么除以根号d？（快手一面）</p>
+<p>介绍一下word embedding，什么是negative sampling？（百度一面）</p>
+<p>介绍一下TFIDF（快手一面）</p>
+<p>介绍下pre train（百度一面）</p>
+<h2 id="数学">数学</h2>
+<ul>
+<li><p>如何理解矩阵的特征值与特征向量，讲一下SVD分解？（京东二面）</p>
+<p>https://www.zybuluo.com/Perfect-Demo/note/1101229</p></li>
+</ul>
 
       
     </div>
@@ -539,7 +566,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#机器学习基础"><span class="nav-number">1.</span> <span class="nav-text">机器学习基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#nlp"><span class="nav-number">2.</span> <span class="nav-text">NLP</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#ml"><span class="nav-number">1.</span> <span class="nav-text">ML</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nlp"><span class="nav-number">2.</span> <span class="nav-text">NLP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数学"><span class="nav-number">3.</span> <span class="nav-text">数学</span></a></li></ol></div>
             
 
           </div>
@@ -575,7 +602,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">15.1k</span>
+    <span title="Site words total count">16.2k</span>
   
 </div>
 
