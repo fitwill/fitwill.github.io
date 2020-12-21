@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="基于BFS邻域的LINE 待补充 基于DFS邻域的DeepWalk 中心思想 Word2Vec是一种常用的word embedding方法，Word2Vec通过语料库中的句子序列来描述词与词的共现关系，进而学习到词语的向量表示。 DeepWalk的思想类似word2vec，使用图中节点与节点的共现关系来学习节点的向量表示。那么关键的问题就是如何来描述节点与节点的共现关系，DeepWalk给出的方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【GNN】Node2Vec">
+<meta property="og:url" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/index.html">
+<meta property="og:site_name" content="GO WITH Will">
+<meta property="og:description" content="基于BFS邻域的LINE 待补充 基于DFS邻域的DeepWalk 中心思想 Word2Vec是一种常用的word embedding方法，Word2Vec通过语料库中的句子序列来描述词与词的共现关系，进而学习到词语的向量表示。 DeepWalk的思想类似word2vec，使用图中节点与节点的共现关系来学习节点的向量表示。那么关键的问题就是如何来描述节点与节点的共现关系，DeepWalk给出的方法">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928225904191.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230047605.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230218609.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230314007.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230833882.png">
+<meta property="og:image" content="https://www.zhihu.com/equation?tex=d_%7Btx%7D">
+<meta property="og:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200929093514729.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200929094206605.png">
+<meta property="article:published_time" content="2020-09-28T14:40:26.994Z">
+<meta property="article:modified_time" content="2020-09-29T01:44:41.757Z">
+<meta property="article:author" content="Will">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928225904191.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://willzhang.tech/2020/09/28/【GNN】Node2Vec/"/>
+
+
+
+
+
+  <title>【GNN】Node2Vec | GO WITH Will</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GO WITH Will</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Will">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GO WITH Will">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【GNN】Node2Vec</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-09-28T22:40:26+08:00">
+                2020-09-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  3
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="基于bfs邻域的line">基于BFS邻域的LINE</h2>
+<p>待补充</p>
+<h2 id="基于dfs邻域的deepwalk">基于DFS邻域的DeepWalk</h2>
+<h3 id="中心思想">中心思想</h3>
+<p>Word2Vec是一种常用的word embedding方法，Word2Vec通过语料库中的句子序列来描述词与词的共现关系，进而学习到词语的向量表示。</p>
+<p>DeepWalk的思想类似word2vec，使用<strong>图中节点与节点的共现关系</strong>来学习节点的向量表示。那么关键的问题就是如何来描述节点与节点的共现关系，DeepWalk给出的方法是使用随机游走(Random Walk)的方式在图中进行节点采样。Random Walk是一种<strong>可重复访问已访问节点的深度优先遍历</strong>算法。给定当前访问起始节点，从其邻居中随机采样节点作为下一个访问节点，重复此过程，直到访问序列长度满足预设条件。</p>
+<h3 id="训练过程">训练过程</h3>
+<p>DeepWalk算法主要包括两个步骤，第一步为随机游走采样节点序列，第二步为使用skip-gram学习表达向量。</p>
+<ol type="1">
+<li>构建同构网络，从网络中的每个节点开始分别进行Random Walk 采样，得到局部相关联的训练数据；</li>
+<li>对采样数据进行skip-gram训练，将离散的网络节点表示成向量化，最大化节点共现，使用Hierarchical Softmax来做超大规模分类的分类器。</li>
+</ol>
+<h2 id="node2vec">Node2Vec</h2>
+<h3 id="中心思想-1">中心思想</h3>
+<p>Node2Vec是一种综合考虑DFS邻域和BFS邻域的graph embedding方法。简单来说，可以看作是deepwalk的一种扩展，是结合了DFS和BFS随机游走的deepwalk。</p>
+<p>设 <span class="math inline">\(f(u)\)</span> 是将顶点 <span class="math inline">\(u\)</span> 映射为embedding向量的映射函数，对于图中每个顶点 <span class="math inline">\(u\)</span> 定义 <span class="math inline">\(N_s(u)\)</span> 为通过采样策略 <span class="math inline">\(S\)</span> 采样出的顶点 <span class="math inline">\(u\)</span> 的近邻顶点集合。<u><strong>node2vec优化的目标是给定每个顶点条件下，令其近邻顶点（如何定义近邻顶点很重要）出现的概率最大。</strong></u></p>
+<p><img src="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928225904191.png" alt="image-20200928225904191" style="zoom:60%;"></p>
+<p>为了将上述最优化问题可解，文章提出两个假设：</p>
+<ul>
+<li><p>条件独立性假设</p>
+<p>假设给定源顶点下，其近邻顶点出现的概率与近邻集合中其余顶点无关。</p>
+<p><img src="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230047605.png" alt="image-20200928230047605" style="zoom:50%;"></p></li>
+<li><p>特征空间对称性假设</p>
+<p>这里是说一个顶点作为源顶点和作为近邻顶点的时候共享同一套embedding向量。在这个假设下，上述条件概率公式可表示为：</p>
+<p><img src="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230218609.png" alt="image-20200928230218609" style="zoom:50%;"></p></li>
+</ul>
+<p>根据以上两个假设条件，最终的目标函数表示为：</p>
+<p><img src="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230314007.png" alt="image-20200928230314007" style="zoom:50%;"></p>
+<p>由于归一化因子 <span class="math inline">\(Z_u\)</span>的计算代价高，所以采用负采样技术优化。</p>
+<h3 id="顶点序列采样策略">顶点序列采样策略</h3>
+<p>node2vec依然采用随机游走的方式获取顶点的近邻序列，不同的是node2vec采用的是一种有偏的随机游走。</p>
+<p>给定当前顶点 <span class="math inline">\(v\)</span>，访问下一个顶点<span class="math inline">\(x\)</span>的概率为：</p>
+<p><img src="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200928230833882.png" alt="image-20200928230833882" style="zoom:30%;"></p>
+<p><span class="math inline">\(\pi_{vx}\)</span>是顶点 <span class="math inline">\(v\)</span> 和顶点 <span class="math inline">\(x\)</span> 之间的未归一化转移概率，<span class="math inline">\(Z\)</span> 是归一化常数。</p>
+<p>Node2Vec引入两个超参数 <span class="math inline">\(p\)</span> 和 <span class="math inline">\(q\)</span> 来控制随机游走的策略，假设当前随机游走经过边 <span class="math inline">\((t,v)\)</span> 到达顶点 <span class="math inline">\(v\)</span>。设 <span class="math inline">\(\pi_{vx} = \alpha_{pq}(t,x)·w_{vx}\)</span> ，<span class="math inline">\(w_{vx}\)</span>是顶点 <span class="math inline">\(v\)</span> 和 <span class="math inline">\(x\)</span> 之间的边权，<img src="https://www.zhihu.com/equation?tex=d_%7Btx%7D" alt="[公式]"> <span class="math inline">\(d_{tx}\)</span>为顶点 <span class="math inline">\(t\)</span> 和顶点 <span class="math inline">\(x\)</span> 之间的最短路径长度。</p>
+<p><img src="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200929093514729.png" alt="image-20200929093514729" style="zoom:30%;"></p>
+<p>参数 <span class="math inline">\(p\)</span> 控制重复访问刚刚访问过的顶点的概率。注意到 <span class="math inline">\(p\)</span> 仅作用于 <span class="math inline">\(d_{tx}=0\)</span> 情况，而 <span class="math inline">\(d_{tx}=0\)</span> 表示顶点 <span class="math inline">\(x\)</span> 就是访问当前顶点之前刚刚访 <span class="math inline">\(v\)</span> 问过的顶点。 那么若 <span class="math inline">\(p\)</span> 较高，则访问刚刚访问过的顶点的概率会变低，反之变高。</p>
+<p>参数 <span class="math inline">\(q\)</span> 控制着游走是向外还是向内，若大于1，随机游走倾向于访问和 <span class="math inline">\(t\)</span> 接近的顶点(偏向BFS)。若小于1，倾向于访问远离 <span class="math inline">\(t\)</span> 的顶点(偏向DFS)。</p>
+<p>下面的图描述的是当从 <span class="math inline">\(t\)</span> 访问到 <span class="math inline">\(v\)</span> 时，决定下一个访问顶点时每个潜在目标对应的 <span class="math inline">\(\alpha\)</span>。</p>
+<p><img src="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/image-20200929094206605.png" alt="image-20200929094206605" style="zoom:40%;"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/" rel="next" title="【NLP】ERNIE">
+                <i class="fa fa-chevron-left"></i> 【NLP】ERNIE
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/11/12/%E7%BE%8E%E5%9B%A2HR%E9%9D%A2/" rel="prev" title="美团HR面">
+                美团HR面 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Will" />
+            
+              <p class="site-author-name" itemprop="name">Will</p>
+              <p class="site-description motion-element" itemprop="description">LIVE FAST DIE YOUNG  BE WILD HAVE FUN</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于bfs邻域的line"><span class="nav-number">1.</span> <span class="nav-text">基于BFS邻域的LINE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于dfs邻域的deepwalk"><span class="nav-number">2.</span> <span class="nav-text">基于DFS邻域的DeepWalk</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#中心思想"><span class="nav-number">2.1.</span> <span class="nav-text">中心思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#训练过程"><span class="nav-number">2.2.</span> <span class="nav-text">训练过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#node2vec"><span class="nav-number">3.</span> <span class="nav-text">Node2Vec</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#中心思想-1"><span class="nav-number">3.1.</span> <span class="nav-text">中心思想</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顶点序列采样策略"><span class="nav-number">3.2.</span> <span class="nav-text">顶点序列采样策略</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Will</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">31.3k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+<div class="powered-by">
+	<i class="fa fa-user-md"></i>
+	<span id="busuanzi_container_site_uv">
+		本站访客数:<span id="busuanzi_value_site_uv"></span>
+	</span>
+	<span class="post-meta-divider">|</span>
+	<span id="busuanzi_container_site_pv">
+		本站访问量<span id="busuanzi_value_site_pv"></span>
+	</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

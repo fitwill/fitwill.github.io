@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="ERNIE 词的语义表示 Word embedding 通过NNML&#x2F;CBOW&#x2F;Skip-gram网络来学习 ➡️ 浅层预训练模型 COVE&#x2F;ELMO ➡️ 深层预训练模型 BERT&#x2F;ERNIE&#x2F;XLNET ERNIE的原理介绍 BERT的缺陷 BERT的预训练任务Mask LM进行了强行掩码，把词与词、字与字之间的关系拆散了。如“哈尔滨”掩码掉“尔”，这样就会缺失信息。 ERNIE 1.0 对此">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【NLP】ERNIE">
+<meta property="og:url" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/index.html">
+<meta property="og:site_name" content="GO WITH Will">
+<meta property="og:description" content="ERNIE 词的语义表示 Word embedding 通过NNML&#x2F;CBOW&#x2F;Skip-gram网络来学习 ➡️ 浅层预训练模型 COVE&#x2F;ELMO ➡️ 深层预训练模型 BERT&#x2F;ERNIE&#x2F;XLNET ERNIE的原理介绍 BERT的缺陷 BERT的预训练任务Mask LM进行了强行掩码，把词与词、字与字之间的关系拆散了。如“哈尔滨”掩码掉“尔”，这样就会缺失信息。 ERNIE 1.0 对此">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925171744291.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925223843670.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925155509984.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925161434910.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925224442089.png">
+<meta property="og:image" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925224634128.png">
+<meta property="article:published_time" content="2020-09-25T07:34:24.391Z">
+<meta property="article:modified_time" content="2020-09-25T14:53:51.087Z">
+<meta property="article:author" content="Will">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925171744291.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://willzhang.tech/2020/09/25/【NLP】ERNIE/"/>
+
+
+
+
+
+  <title>【NLP】ERNIE | GO WITH Will</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">GO WITH Will</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://willzhang.tech/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Will">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="GO WITH Will">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">【NLP】ERNIE</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-09-25T15:34:24+08:00">
+                2020-09-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  597
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  2
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="ernie">ERNIE</h1>
+<h2 id="词的语义表示">词的语义表示</h2>
+<p>Word embedding 通过NNML/CBOW/Skip-gram网络来学习</p>
+<p>➡️ 浅层预训练模型 COVE/ELMO</p>
+<p>➡️ 深层预训练模型 BERT/ERNIE/XLNET</p>
+<h2 id="ernie的原理介绍">ERNIE的原理介绍</h2>
+<h3 id="bert的缺陷">BERT的缺陷</h3>
+<p>BERT的预训练任务Mask LM进行了强行掩码，把词与词、字与字之间的关系拆散了。如“哈尔滨”掩码掉“尔”，这样就会缺失信息。</p>
+<h3 id="ernie-1.0-对此的改进">ERNIE 1.0 对此的改进</h3>
+<p>Mask整个词语、短语、命名实体，相当于<strong>引入了语言知识</strong>。</p>
+<h3 id="ernie-2.0">ERNIE 2.0</h3>
+<p><img src="/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925171744291.png" alt="image-20200925171744291" style="zoom:50%;"></p>
+<h4 id="构建多种层次的任务来全面捕捉预料中词法语义结构的潜在知识">构建多种层次的任务来全面捕捉预料中词法、语义、结构的潜在知识</h4>
+<p><img src="/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925223843670.png" alt="image-20200925223843670" style="zoom:50%;"></p>
+<ul>
+<li>词法层次：知识预测</li>
+<li>结构层次：句子排序</li>
+<li>语义层次：句子逻辑关系预测（因为所以、如果就...）</li>
+<li>加入task vector来指示是什么任务</li>
+</ul>
+<h4 id="具体任务的网络实现">具体任务的网络实现</h4>
+<p><img src="/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925155509984.png" alt="image-20200925155509984" style="zoom:50%;"></p>
+<h4 id="ernie的encoder">ERNIE的encoder</h4>
+<p>核心：Transformer encoder的self attention机制</p>
+<h4 id="ernie的多任务学习策略">ERNIE的多任务学习策略</h4>
+<ul>
+<li>策略一：顺序学习
+<ul>
+<li>部分任务的语义信息允许递进式的学习，如预测被盖住的词、被盖住的字、被盖住的命名实体；</li>
+<li>好处是容易训练；</li>
+<li>缺点是容易产生遗忘；</li>
+</ul></li>
+<li>策略二：多卡并行下的多任务学习
+<ul>
+<li>batch内、batch间都进行多任务的切换；</li>
+</ul></li>
+</ul>
+<h2 id="ernir应用场景">ERNIR应用场景</h2>
+<h4 id="搜索问答query识别和qp匹配">搜索问答Query识别和QP匹配</h4>
+<p>分为两个部分。</p>
+<p>第一先对query做文本分类，即用户的输入是不是可以被看成一个有答案的问题。先用小规模的有标注数据fine-tune一下ERNIE，然后用ERNIE来标注海量数据，再用这些有标注数据训练一个想对简单的神经网络。即老师通过少量有答案的习题可以学得很好，进而可以在题海中给出正确答案，学生从题海中学习出简单、有效的新模型。</p>
+<p><img src="/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925161434910.png" alt="image-20200925161434910" style="zoom:50%;"></p>
+<p>第二，在QP匹配环节，首先用小规模的有标注数据fine-tune一下ERNIE，其输入就是QP pair的形式，通过CLS标记来获取P是不顺匹配Q。然后用这个微调后的模型来对海量数据进行标注，使用标注后的数据训练双塔模型，通过cos来计算相似度分数。</p>
+<h2 id="ernie轻量化技术">ERNIE轻量化技术</h2>
+<h3 id="思路1ernie-tiny">思路1：ERNIE Tiny</h3>
+<p><img src="/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925224442089.png" alt="image-20200925224442089" style="zoom:50%;"></p>
+<h3 id="思路2ernie-slim">思路2：ERNIE Slim</h3>
+<p><img src="/2020/09/25/%E3%80%90NLP%E3%80%91ERNIE/image-20200925224634128.png" alt="image-20200925224634128" style="zoom:50%;"></p>
+<h2 id="ernie的最新进展">ERNIE的最新进展</h2>
+<h3 id="ernie-gen利用ernie来做自然语言生成">ERNIE-GEN：利用ERNIE来做自然语言生成</h3>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/23/%E9%98%85%E8%AF%BB%E3%80%8A%E4%B9%98%E9%A3%8E%E7%A0%B4%E6%B5%AA%E7%9A%84PTM%EF%BC%9A%E4%B8%A4%E5%B9%B4%E6%9D%A5%E9%A2%84%E8%AE%AD%E7%BB%83%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%8A%80%E6%9C%AF%E8%BF%9B%E5%B1%95%E3%80%8B/" rel="next" title="阅读《乘风破浪的PTM：两年来预训练模型的技术进展》">
+                <i class="fa fa-chevron-left"></i> 阅读《乘风破浪的PTM：两年来预训练模型的技术进展》
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/09/28/%E3%80%90GNN%E3%80%91Node2Vec/" rel="prev" title="【GNN】Node2Vec">
+                【GNN】Node2Vec <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Will" />
+            
+              <p class="site-author-name" itemprop="name">Will</p>
+              <p class="site-description motion-element" itemprop="description">LIVE FAST DIE YOUNG  BE WILD HAVE FUN</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7Carchive">
+              
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">categories</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#ernie"><span class="nav-number">1.</span> <span class="nav-text">ERNIE</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#词的语义表示"><span class="nav-number">1.1.</span> <span class="nav-text">词的语义表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ernie的原理介绍"><span class="nav-number">1.2.</span> <span class="nav-text">ERNIE的原理介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#bert的缺陷"><span class="nav-number">1.2.1.</span> <span class="nav-text">BERT的缺陷</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ernie-1.0-对此的改进"><span class="nav-number">1.2.2.</span> <span class="nav-text">ERNIE 1.0 对此的改进</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ernie-2.0"><span class="nav-number">1.2.3.</span> <span class="nav-text">ERNIE 2.0</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#构建多种层次的任务来全面捕捉预料中词法语义结构的潜在知识"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">构建多种层次的任务来全面捕捉预料中词法、语义、结构的潜在知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体任务的网络实现"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">具体任务的网络实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ernie的encoder"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">ERNIE的encoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ernie的多任务学习策略"><span class="nav-number">1.2.3.4.</span> <span class="nav-text">ERNIE的多任务学习策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ernir应用场景"><span class="nav-number">1.3.</span> <span class="nav-text">ERNIR应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#搜索问答query识别和qp匹配"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">搜索问答Query识别和QP匹配</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ernie轻量化技术"><span class="nav-number">1.4.</span> <span class="nav-text">ERNIE轻量化技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#思路1ernie-tiny"><span class="nav-number">1.4.1.</span> <span class="nav-text">思路1：ERNIE Tiny</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#思路2ernie-slim"><span class="nav-number">1.4.2.</span> <span class="nav-text">思路2：ERNIE Slim</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ernie的最新进展"><span class="nav-number">1.5.</span> <span class="nav-text">ERNIE的最新进展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ernie-gen利用ernie来做自然语言生成"><span class="nav-number">1.5.1.</span> <span class="nav-text">ERNIE-GEN：利用ERNIE来做自然语言生成</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Will</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">31.3k</span>
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+
+<div class="powered-by">
+	<i class="fa fa-user-md"></i>
+	<span id="busuanzi_container_site_uv">
+		本站访客数:<span id="busuanzi_value_site_uv"></span>
+	</span>
+	<span class="post-meta-divider">|</span>
+	<span id="busuanzi_container_site_pv">
+		本站访问量<span id="busuanzi_value_site_pv"></span>
+	</span>
+</div>
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
